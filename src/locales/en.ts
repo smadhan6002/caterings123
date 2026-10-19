@@ -199,6 +199,7 @@ export const en = {
   adminNav: {
     dashboard: 'Dashboard',
     orders: 'Orders',
+    kitchenSheet: 'Kitchen Order Sheet',
     dishes: 'Dishes',
     customers: 'Customers',
     menuPdf: 'Food Menu PDF',

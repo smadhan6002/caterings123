@@ -492,6 +492,7 @@ export const ta: Translations = {
   adminNav: {
     dashboard: 'டாஷ்போர்டு',
     orders: 'ஆர்டர்கள்',
+    kitchenSheet: 'சமையல் குறிப்பு தாள்',
     dishes: 'உணவு வகைகள்',
     customers: 'வாடிக்கையாளர்கள்',
     menuPdf: 'உணவு மெனு PDF',

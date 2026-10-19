@@ -14,6 +14,7 @@ import {
   Menu,
   Globe,
   ArrowLeft,
+  ChefHat,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { siteConfig } from '../../config/site';
@@ -23,6 +24,7 @@ import logoImg from '../../assets/LOGO.png';
 export type AdminView =
   | 'dashboard'
   | 'orders'
+  | 'kitchen-sheet'
   | 'dishes'
   | 'customers'
   | 'menu-pdf'
@@ -53,6 +55,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const navItems: { view: AdminView; labelEn: string; labelTa: string; icon: React.ReactNode }[] = [
     { view: 'dashboard', labelEn: 'Dashboard', labelTa: 'டாஷ்போர்டு', icon: <LayoutDashboard size={18} /> },
     { view: 'orders', labelEn: 'Orders', labelTa: 'ஆர்டர்கள்', icon: <ClipboardList size={18} /> },
+    { view: 'kitchen-sheet', labelEn: 'Kitchen Order Sheet', labelTa: 'சமையல் குறிப்பு தாள்', icon: <ChefHat size={18} /> },
     { view: 'dishes', labelEn: 'Dishes', labelTa: 'உணவு வகைகள்', icon: <UtensilsCrossed size={18} /> },
     { view: 'customers', labelEn: 'Customers', labelTa: 'வாடிக்கையாளர்கள்', icon: <Users size={18} /> },
     { view: 'menu-pdf', labelEn: 'Food Menu PDF', labelTa: 'உணவு மெனு PDF', icon: <FileDown size={18} /> },
@@ -183,6 +186,7 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ activeView, onMenuOpen
   const viewTitles: Record<AdminView, { en: string; ta: string }> = {
     dashboard: { en: 'Dashboard', ta: 'டாஷ்போர்டு' },
     orders: { en: 'Order Management', ta: 'ஆர்டர்கள் மேலாண்மை' },
+    'kitchen-sheet': { en: 'Kitchen Order Sheet', ta: 'சமையல் குறிப்பு தாள்' },
     dishes: { en: 'Dish Management', ta: 'உணவு வகைகள் மேலாண்மை' },
     customers: { en: 'Customer Management', ta: 'வாடிக்கையாளர்கள் மேலாண்மை' },
     'menu-pdf': { en: 'Food Menu PDF', ta: 'உணவு மெனு PDF' },

@@ -65,6 +65,45 @@ export interface OrderFoodQuantity {
   note?: string;
 }
 
+export type KitchenPrepStatus =
+  | 'Not Prepared'
+  | 'In Preparation'
+  | 'Ready'
+  | 'Completed';
+
+export interface KitchenSheetItem {
+  id: string;
+  dishId: string;
+  dishName: string;
+  dishNameTa?: string;
+  customerQuantity?: number | null;
+  customerUnit?: string;
+  prepQuantity: number | string;
+  unit: string;
+  isCustomUnit?: boolean;
+  kitchenNotes?: string;
+}
+
+export interface KitchenOrderSheet {
+  id: string;
+  orderId: string;
+  customerName: string;
+  mobile: string;
+  alternativeMobile?: string;
+  eventAddress?: string;
+  eventType?: string;
+  orderDate: string;
+  deliveryTime?: string;
+  createdAt: string;
+  updatedAt: string;
+  guestCount?: number | null;
+  items: KitchenSheetItem[];
+  status: KitchenPrepStatus;
+  cookingInstructions?: string;
+  chefNotes?: string;
+  pdfLanguage?: 'en' | 'ta' | 'both';
+}
+
 export interface Order {
   id: string;           // e.g. ORD-0001
   customerId?: string;  // Associated customer ID
@@ -85,6 +124,7 @@ export interface Order {
   balancePaid?: number;     // Maintained for backward compatibility
   payments?: OrderPayment[]; // Multiple split payments / installment history
   status: OrderStatus;
+  kitchenSheetStatus?: KitchenPrepStatus;
   notes: string;            // Special instructions
   adminNotes?: string;      // Internal admin notes
   invoiceGenerated: boolean;

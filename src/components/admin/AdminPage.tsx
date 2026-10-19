@@ -10,12 +10,14 @@ import { AdminMenuPDF } from './AdminMenuPDF';
 import { AdminCampaigns } from './AdminCampaigns';
 import { AdminPayments } from './AdminPayments';
 import { AdminInvoices } from './AdminInvoices';
+import { AdminKitchenSheet } from './AdminKitchenSheet';
 import { AdminSettings } from './AdminSettings';
 import type { AdminView } from './AdminSidebar';
 
 export const AdminPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(authService.isLoggedIn());
   const [activeView, setActiveView] = useState<AdminView>('dashboard');
+  const [selectedKitchenOrderId, setSelectedKitchenOrderId] = useState<string | undefined>(undefined);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Re-check session whenever the component mounts
@@ -33,13 +35,19 @@ export const AdminPage: React.FC = () => {
     setIsLoggedIn(false);
   }
 
+  function handleNavigateToKitchenSheet(orderId?: string) {
+    setSelectedKitchenOrderId(orderId);
+    setActiveView('kitchen-sheet');
+  }
+
   if (!isLoggedIn) {
     return <AdminLogin onLogin={handleLogin} />;
   }
 
   const viewMap: Record<AdminView, React.ReactNode> = {
     dashboard: <AdminDashboard onNavigate={(v) => setActiveView(v as AdminView)} />,
-    orders: <AdminOrders />,
+    orders: <AdminOrders onOpenKitchenSheet={handleNavigateToKitchenSheet} />,
+    'kitchen-sheet': <AdminKitchenSheet initialOrderId={selectedKitchenOrderId} />,
     dishes: <AdminDishes />,
     customers: <AdminCustomers />,
     'menu-pdf': <AdminMenuPDF />,

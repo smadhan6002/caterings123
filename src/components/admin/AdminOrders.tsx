@@ -17,6 +17,7 @@ import {
   Globe,
   Store,
   FileText,
+  ChefHat,
 } from 'lucide-react';
 import {
   orderService,
@@ -26,8 +27,10 @@ import {
   getOrderPaymentStatus,
 } from '../../services/orderService';
 import { invoiceService } from '../../services/invoiceService';
+import { kitchenSheetService } from '../../services/kitchenSheetService';
 import { generateInvoicePDF } from '../../utils/generateInvoicePDF';
 import { AdminAddOrderModal } from './AdminAddOrderModal';
+import { KitchenOrderSheetModal } from './KitchenOrderSheetModal';
 import { useLanguage } from '../../context/LanguageContext';
 import type { Order, OrderStatus, OrderPayment, PaymentMethod, OrderSource } from '../../types/admin';
 import { ta } from '../../locales/ta';
@@ -96,9 +99,10 @@ interface OrderDetailProps {
   order: Order;
   onClose: () => void;
   onUpdated: () => void;
+  onOpenKitchenSheet: (order: Order) => void;
 }
 
-const OrderDetail: React.FC<OrderDetailProps> = ({ order: initialOrder, onClose, onUpdated }) => {
+const OrderDetail: React.FC<OrderDetailProps> = ({ order: initialOrder, onClose, onUpdated, onOpenKitchenSheet }) => {
   const [order, setOrder] = useState<Order>(initialOrder);
   const [totalAmt, setTotalAmt] = useState(String(initialOrder.totalAmount || ''));
   const [payments, setPayments] = useState<OrderPayment[]>(normalizeOrderPayments(initialOrder));
@@ -305,6 +309,14 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order: initialOrder, onClose,
             </div>
             <div className="flex items-center gap-2">
               <button
+                onClick={() => onOpenKitchenSheet(order)}
+                className="px-3 py-1.5 text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5"
+                title="Generate / View Kitchen Order Sheet"
+              >
+                <ChefHat size={14} />
+                <span>Kitchen Sheet</span>
+              </button>
+              <button
                 onClick={handleDownloadInvoice}
                 disabled={downloadingInvoice}
                 className="px-3 py-1.5 text-xs font-semibold text-primary bg-orange-50 hover:bg-orange-100 border border-orange-200/60 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
@@ -358,6 +370,43 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order: initialOrder, onClose,
                 </div>
               )}
             </div>
+
+            {/* Kitchen Preparation Sheet Status Block */}
+            {(() => {
+              const savedSheet = kitchenSheetService.getByOrderId(order.id);
+              const kStatus = savedSheet?.status || order.kitchenSheetStatus || 'Not Prepared';
+              return (
+                <div className="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center flex-shrink-0 border border-amber-200">
+                      <ChefHat size={18} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-amber-950 uppercase tracking-wider">
+                          Kitchen Prep Status:
+                        </span>
+                        <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white text-amber-800 border border-amber-300 shadow-2xs">
+                          {kStatus}
+                        </span>
+                      </div>
+                      <p className="text-xs text-amber-800 mt-0.5">
+                        {savedSheet
+                          ? `${savedSheet.items.length} confirmed preparation items saved for cooking master`
+                          : 'No preparation sheet saved yet. Click to generate cooking master copy.'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => onOpenKitchenSheet(order)}
+                    className="px-3.5 py-1.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap self-start sm:self-auto"
+                  >
+                    <ChefHat size={14} />
+                    <span>Generate Kitchen Sheet</span>
+                  </button>
+                </div>
+              );
+            })()}
 
             {/* Selected Dishes & Flexible Quantities */}
             <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2">
@@ -755,7 +804,11 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order: initialOrder, onClose,
 };
 
 // ─── MAIN ORDERS LIST ─────────────────────────────────────────────────
-export const AdminOrders: React.FC = () => {
+interface AdminOrdersProps {
+  onOpenKitchenSheet?: (orderId: string) => void;
+}
+
+export const AdminOrders: React.FC<AdminOrdersProps> = ({ onOpenKitchenSheet: _onOpenKitchenSheet }) => {
   const { lang } = useLanguage();
   const isTa = lang === 'ta';
 
@@ -765,6 +818,7 @@ export const AdminOrders: React.FC = () => {
   const [sourceFilter, setSourceFilter] = useState<OrderSource | ''>('');
   const [deliveryDateFilter, setDeliveryDateFilter] = useState<string>('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [kitchenSheetOrder, setKitchenSheetOrder] = useState<Order | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
   const [isAddOrderModalOpen, setIsAddOrderModalOpen] = useState(false);
@@ -961,9 +1015,37 @@ export const AdminOrders: React.FC = () => {
                           <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${statusColor[order.status]}`}>
                             {order.status}
                           </span>
+                          {(() => {
+                            const kStatus = kitchenSheetService.getByOrderId(order.id)?.status || order.kitchenSheetStatus;
+                            if (!kStatus) return null;
+                            const kStyle =
+                              kStatus === 'Completed'
+                                ? 'bg-green-50 text-green-700 border-green-200'
+                                : kStatus === 'Ready'
+                                ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                : kStatus === 'In Preparation'
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                : 'bg-slate-50 text-slate-600 border-slate-200';
+                            return (
+                              <span
+                                className={`block text-[10px] font-bold px-1.5 py-0.5 rounded border ${kStyle} mt-1 w-max`}
+                                title="Kitchen Prep Status"
+                              >
+                                🍳 {kStatus}
+                              </span>
+                            );
+                          })()}
                         </td>
                         <td className="px-5 py-3.5 text-right">
                           <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => setKitchenSheetOrder(order)}
+                              className="px-2.5 py-1 text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                              title="Generate / View Kitchen Order Sheet"
+                            >
+                              <ChefHat size={14} />
+                              <span className="hidden xl:inline">Kitchen Sheet</span>
+                            </button>
                             <button
                               onClick={() => setSelectedOrder(order)}
                               className="p-1.5 text-slate-500 hover:text-primary hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
@@ -1047,16 +1129,23 @@ export const AdminOrders: React.FC = () => {
                       </div>
                       <div className="flex gap-2 pt-2">
                         <button
+                          onClick={() => setKitchenSheetOrder(order)}
+                          className="flex-1 flex items-center justify-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-200/80 py-2 rounded-xl text-xs font-bold cursor-pointer"
+                        >
+                          <ChefHat size={14} /> Kitchen Sheet
+                        </button>
+                        <button
                           onClick={() => setSelectedOrder(order)}
                           className="flex-1 flex items-center justify-center gap-1.5 bg-orange-50 text-primary py-2 rounded-xl text-xs font-semibold cursor-pointer"
                         >
-                          <Eye size={14} /> View Details
+                          <Eye size={14} /> Details
                         </button>
                         <button
                           onClick={() => setDeleteConfirm(order.id)}
-                          className="flex-1 flex items-center justify-center gap-1.5 bg-red-50 text-red-600 py-2 rounded-xl text-xs font-semibold cursor-pointer"
+                          className="p-2 bg-red-50 text-red-600 rounded-xl text-xs font-semibold cursor-pointer"
+                          title="Delete"
                         >
-                          <Trash2 size={14} /> Delete
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
@@ -1087,10 +1176,27 @@ export const AdminOrders: React.FC = () => {
         <OrderDetail
           order={selectedOrder}
           onClose={() => setSelectedOrder(null)}
+          onOpenKitchenSheet={(ord) => setKitchenSheetOrder(ord)}
           onUpdated={() => {
             loadOrders();
             const updated = orderService.getById(selectedOrder.id);
             if (updated) setSelectedOrder(updated);
+          }}
+        />
+      )}
+
+      {/* Kitchen Order Sheet Modal */}
+      {kitchenSheetOrder && (
+        <KitchenOrderSheetModal
+          order={kitchenSheetOrder}
+          isOpen={!!kitchenSheetOrder}
+          onClose={() => setKitchenSheetOrder(null)}
+          onSaved={() => {
+            loadOrders();
+            if (selectedOrder && selectedOrder.id === kitchenSheetOrder.id) {
+              const updated = orderService.getById(kitchenSheetOrder.id);
+              if (updated) setSelectedOrder(updated);
+            }
           }}
         />
       )}
