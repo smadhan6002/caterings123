@@ -1,10 +1,51 @@
 @import "tailwindcss";
-@import "tailwindcss/utilities";
 
 @theme {
   --color-primary: #ea580c;
   --color-primary-light: #ffedd5;
   --font-sans: "Inter", "system-ui", "sans-serif";
+
+  /* Vibrant Blue-Based Typography & Text Theme */
+  --color-slate-900: #1e3a8a; /* Deep Royal Navy Blue */
+  --color-slate-800: #1e40af; /* Rich Royal Blue */
+  --color-slate-700: #1d4ed8; /* Vibrant Classic Blue */
+  --color-slate-600: #2563eb; /* Accessible Medium Blue */
+  --color-slate-500: #3b82f6; /* Soft Sky Blue */
+}
+
+:root {
+  --color-text-primary: #1e3a8a; /* Deep rich blue */
+  --color-text-secondary: #1e40af; /* Royal blue */
+  --color-text-muted: #2563eb; /* Medium blue */
+  --color-link: #1d4ed8;
+  --color-brand-orange: #ea580c;
+}
+
+body {
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+
+/* Headings default to rich royal blue */
+h1, h2, h3, h4, h5, h6 {
+  color: #1e3a8a;
+}
+
+/* Ensure website texts have a vibrant, prominent blue tone */
+.text-slate-900 {
+  color: #1e3a8a;
+}
+.text-slate-800 {
+  color: #1e40af;
+}
+.text-slate-700 {
+  color: #1d4ed8;
+}
+.text-slate-600 {
+  color: #2563eb;
+}
+.text-slate-500 {
+  color: #3b82f6;
 }
 
 /* Hide scrollbar for category nav but allow scrolling */
@@ -15,3 +56,4 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+

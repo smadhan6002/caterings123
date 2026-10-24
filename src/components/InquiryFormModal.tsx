@@ -138,10 +138,10 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
       {/* Modal */}
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-5 sm:p-6 overflow-y-auto max-h-[90vh] mx-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-slate-900">{t.yourDetails}</h2>
+          <h2 className="text-xl font-bold text-blue-950">{t.yourDetails}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 -mr-2"
+            className="text-blue-400 hover:text-blue-700 transition-colors p-2 -mr-2"
             aria-label="Close form"
           >
             <X size={24} />
@@ -150,7 +150,7 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <div>
-            <label className="block text-sm font-medium text-slate-900 mb-1">{t.name} *</label>
+            <label className="block text-sm font-semibold text-blue-900 mb-1">{t.name} *</label>
             <input
               type="text"
               name="name"
@@ -162,7 +162,7 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 mb-1">{t.phone} *</label>
+            <label className="block text-sm font-semibold text-blue-900 mb-1">{t.phone} *</label>
             <input
               type="tel"
               name="phone"
@@ -175,7 +175,7 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 mb-1">{t.eventAddress} *</label>
+            <label className="block text-sm font-semibold text-blue-900 mb-1">{t.eventAddress} *</label>
             <input
               type="text"
               name="eventAddress"
@@ -187,7 +187,7 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 mb-1">{t.eventType}</label>
+            <label className="block text-sm font-semibold text-blue-900 mb-1">{t.eventType}</label>
             <input
               type="text"
               name="eventType"
@@ -198,7 +198,7 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 mb-1">{t.eventDate} *</label>
+            <label className="block text-sm font-semibold text-blue-900 mb-1">{t.eventDate} *</label>
             <input
               type="date"
               name="eventDate"
@@ -211,7 +211,7 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-900 mb-1">{t.additionalNotes}</label>
+            <label className="block text-sm font-semibold text-blue-900 mb-1">{t.additionalNotes}</label>
             <textarea
               name="notes"
               value={formData.notes}

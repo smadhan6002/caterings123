@@ -3,7 +3,6 @@ import { categories as staticCategories } from '../data/menu';
 import { dishService } from '../services/dishService';
 import { siteConfig } from '../config/site';
 import { ta } from '../locales/ta';
-import { getDishUnitConfig } from '../data/units';
 import logoImg from '../assets/LOGO.png';
 
 interface MenuPageDish {
@@ -43,55 +42,51 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
  */
 function compileMenuData(): MenuPageCategory[] {
   const result: MenuPageCategory[] = [];
+  const activeDishes = dishService.getActiveDishes();
 
-  // 1. Static categories
   for (const cat of staticCategories) {
     const catNameTa = ta.categories?.[cat.id] || cat.name;
-    const dishes: MenuPageDish[] = cat.items.map((item) => {
-      const nameTa = ta.dishTranslationsByEnglishName?.[item.name] || (ta.dishes as Record<string, string>)[item.id] || item.name;
-      const unitCfg = dishService.getDishUnit(item.id) || getDishUnitConfig(item.categoryId);
-      return {
-        id: item.id,
-        name: item.name,
-        nameTa,
-        category: cat.name,
-        categoryId: cat.id,
-        image: item.image,
-        defaultUnit: unitCfg.defaultUnit,
-      };
-    });
-
-    result.push({
-      id: cat.id,
-      name: cat.name,
-      nameTa: catNameTa,
-      dishes,
-    });
+    const catDishes = activeDishes.filter((d) => d.categoryId === cat.id);
+    if (catDishes.length > 0) {
+      result.push({
+        id: cat.id,
+        name: cat.name,
+        nameTa: catNameTa,
+        dishes: catDishes.map((d) => ({
+          id: d.id,
+          name: d.name,
+          nameTa: d.nameTa,
+          category: cat.name,
+          categoryId: d.categoryId,
+          image: d.image,
+          defaultUnit: d.defaultUnit,
+        })),
+      });
+    }
   }
 
-  // 2. Admin added dishes
-  const adminDishes = dishService.getAll();
-  for (const ad of adminDishes) {
-    let targetCat = result.find((c) => c.id === ad.categoryId);
-    if (!targetCat) {
-      targetCat = {
-        id: ad.categoryId,
-        name: ad.categoryId,
-        nameTa: ad.categoryId,
+  // Check any custom categories
+  const knownCatIds = new Set(staticCategories.map((c) => c.id));
+  const otherDishes = activeDishes.filter((d) => !knownCatIds.has(d.categoryId));
+  for (const od of otherDishes) {
+    let target = result.find((c) => c.id === od.categoryId);
+    if (!target) {
+      target = {
+        id: od.categoryId,
+        name: od.categoryName || od.categoryId,
+        nameTa: od.categoryName || od.categoryId,
         dishes: [],
       };
-      result.push(targetCat);
+      result.push(target);
     }
-    const nameTa = (ta.dishes as Record<string, string>)[ad.id] || ad.name;
-    const unitCfg = dishService.getDishUnit(ad.id) || getDishUnitConfig(ad.categoryId);
-    targetCat.dishes.push({
-      id: ad.id,
-      name: ad.name,
-      nameTa,
-      category: targetCat.name,
-      categoryId: ad.categoryId,
-      image: ad.image,
-      defaultUnit: unitCfg.defaultUnit,
+    target.dishes.push({
+      id: od.id,
+      name: od.name,
+      nameTa: od.nameTa,
+      category: target.name,
+      categoryId: od.categoryId,
+      image: od.image,
+      defaultUnit: od.defaultUnit,
     });
   }
 
@@ -214,7 +209,7 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
 
       ctx.font = 'bold 20px "Noto Sans Tamil", "Latha", sans-serif';
       ctx.fillStyle = '#FEF3C7';
-      ctx.fillText('அனபூர்ணா பாரம்பரிய கேட்டரிங் மெனு பட்டியல்', 200, y + 92);
+      ctx.fillText('அன்னபூர்ணா பாரம்பரிய கேட்டரிங் மெனு பட்டியல்', 200, y + 92);
 
       ctx.font = '16px "Inter", "Segoe UI", sans-serif';
       ctx.fillStyle = '#FFFFFF';
@@ -363,6 +358,6 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
   }
 
   onProgress?.(98, 'Finalizing download…');
-  doc.save('Anapuruna_Catering_Food_Menu.pdf');
+  doc.save('Annapoorna_Catering_Food_Menu.pdf');
   onProgress?.(100, 'Complete!');
 }

@@ -11,6 +11,7 @@ import { AdminCampaigns } from './AdminCampaigns';
 import { AdminPayments } from './AdminPayments';
 import { AdminInvoices } from './AdminInvoices';
 import { AdminKitchenSheet } from './AdminKitchenSheet';
+import { AdminRentalItems } from './AdminRentalItems';
 import { AdminSettings } from './AdminSettings';
 import type { AdminView } from './AdminSidebar';
 
@@ -49,6 +50,7 @@ export const AdminPage: React.FC = () => {
     orders: <AdminOrders onOpenKitchenSheet={handleNavigateToKitchenSheet} />,
     'kitchen-sheet': <AdminKitchenSheet initialOrderId={selectedKitchenOrderId} />,
     dishes: <AdminDishes />,
+    'rental-items': <AdminRentalItems />,
     customers: <AdminCustomers />,
     'menu-pdf': <AdminMenuPDF />,
     messages: <AdminCampaigns />,

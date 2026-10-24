@@ -60,10 +60,10 @@ export const CartDrawer: React.FC = () => {
         
         {/* Header */}
         <div className="flex items-center justify-between p-6 pb-2">
-          <h2 className="text-2xl font-semibold text-slate-900">{t.yourSelection}</h2>
+          <h2 className="text-2xl font-bold text-blue-950">{t.yourSelection}</h2>
           <button 
             onClick={() => setIsCartDrawerOpen(false)}
-            className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 transition-colors -mr-2"
+            className="w-10 h-10 flex items-center justify-center rounded-full border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors -mr-2"
             aria-label="Close cart"
           >
             <X size={20} />
@@ -75,7 +75,7 @@ export const CartDrawer: React.FC = () => {
           
           {/* Guest Count */}
           <section>
-            <h3 className="text-sm font-medium text-slate-800 mb-3">{t.numberOfPeople}</h3>
+            <h3 className="text-sm font-semibold text-blue-900 mb-3">{t.numberOfPeople}</h3>
             <GuestCountSelector />
           </section>
 
@@ -85,7 +85,7 @@ export const CartDrawer: React.FC = () => {
           {/* Items */}
           {Object.keys(groupedItems).length > 0 && (
             <section>
-              <h3 className="text-sm font-medium text-slate-800 mb-3">{t.selectedDishes}</h3>
+              <h3 className="text-sm font-semibold text-blue-900 mb-3">{t.selectedDishes}</h3>
               {Object.entries(groupedItems).map(([categoryId, items]) => (
                 <div key={categoryId} className="mb-4">
                   <h4 className="text-xs font-bold text-primary tracking-wider uppercase mb-2">
@@ -96,7 +96,7 @@ export const CartDrawer: React.FC = () => {
                       <div key={item.id} className="flex items-center justify-between gap-4 py-2 border-b border-gray-100 last:border-0">
                         <div className="flex items-center gap-3 flex-1">
                           <Check size={16} className="text-green-500" />
-                          <span className="text-slate-800 text-sm font-medium">{dishName(item.id, item.name)}</span>
+                          <span className="text-blue-900 text-sm font-semibold">{dishName(item.id, item.name)}</span>
                         </div>
                         <button 
                           onClick={() => removeItem(item.id)}
@@ -114,7 +114,7 @@ export const CartDrawer: React.FC = () => {
           )}
           
           {cartItems.length === 0 && (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 text-blue-800/80 font-medium">
               {t.emptyCart}
             </div>
           )}

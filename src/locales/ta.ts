@@ -456,7 +456,7 @@ export const ta: Translations = {
   } as Record<string, string>,
 
   // WhatsApp Message strings
-  waHeader: 'காஞ்சி அம்பால் கேட்டரிங்\nபுதிய கேட்டரிங் ஆர்டர்\n\n',
+  waHeader: 'அன்னபூர்ணா கேட்டரிங்\nபுதிய கேட்டரிங் ஆர்டர்\n\n',
   waOrderId: 'ஆர்டர் எண்',
   waCustomerDetails: 'வாடிக்கையாளர் விவரங்கள்',
   waCustomerName: 'வாடிக்கையாளர் பெயர்',
@@ -470,7 +470,7 @@ export const ta: Translations = {
   waNoneKg: 'எதுவும் குறிப்பிடப்படவில்லை.',
   waAdditionalReq: 'கூடுதல் தேவைகள்',
   waNone: 'எதுவும் இல்லை',
-  waFooter: 'தயவுசெய்து இந்த கேட்டரிங் ஆர்டரைப் பற்றி வாடிக்கையாளரைத் தொடர்புகொள்ளவும்.\n\nநன்றி.\nகாஞ்சி அம்பால் கேட்டரிங்',
+  waFooter: 'தயவுசெய்து இந்த கேட்டரிங் ஆர்டரைப் பற்றி வாடிக்கையாளரைத் தொடர்புகொள்ளவும்.\n\nநன்றி.\nஅன்னபூர்ணா கேட்டரிங்',
   waKgUnit: 'கிலோ',
 
   // Footer
@@ -494,6 +494,7 @@ export const ta: Translations = {
     orders: 'ஆர்டர்கள்',
     kitchenSheet: 'சமையல் குறிப்பு தாள்',
     dishes: 'உணவு வகைகள்',
+    rentalItems: 'வாடகை பொருட்கள்',
     customers: 'வாடிக்கையாளர்கள்',
     menuPdf: 'உணவு மெனு PDF',
     messages: 'வாடிக்கையாளர் செய்திகள்',

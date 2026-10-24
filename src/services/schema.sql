@@ -1,5 +1,5 @@
 -- ==========================================================
--- ANAPURUNA CATERING DATABASE MIGRATION SCRIPT
+-- ANNAPOORNA CATERING DATABASE MIGRATION SCRIPT
 -- PostgreSQL / Supabase Schema Definition
 -- ==========================================================
 
@@ -109,24 +109,68 @@ CREATE TABLE IF NOT EXISTS campaigns (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 7. ROW LEVEL SECURITY (RLS) POLICIES
-ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
-ALTER TABLE order_payments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE dishes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE campaigns ENABLE ROW LEVEL SECURITY;
+-- 8. RENTAL CATEGORIES TABLE
+CREATE TABLE IF NOT EXISTS rental_categories (
+  id VARCHAR(64) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  name_ta VARCHAR(255) NOT NULL,
+  description TEXT
+);
 
--- Allow public to place orders and read menu items
-CREATE POLICY "Public read dishes" ON dishes FOR SELECT USING (true);
-CREATE POLICY "Public insert orders" ON orders FOR INSERT WITH CHECK (true);
-CREATE POLICY "Public insert order items" ON order_items FOR INSERT WITH CHECK (true);
-CREATE POLICY "Public insert customers" ON customers FOR INSERT WITH CHECK (true);
+-- 9. RENTAL ITEMS INVENTORY TABLE
+CREATE TABLE IF NOT EXISTS rental_items (
+  id VARCHAR(64) PRIMARY KEY,
+  code VARCHAR(50) NOT NULL UNIQUE,
+  name_en VARCHAR(255) NOT NULL,
+  name_ta VARCHAR(255) NOT NULL,
+  category_id VARCHAR(64) REFERENCES rental_categories(id),
+  total_quantity INTEGER NOT NULL DEFAULT 0,
+  rental_price NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  pricing_unit VARCHAR(50) NOT NULL DEFAULT 'Per Day',
+  security_deposit NUMERIC(10, 2) DEFAULT 0,
+  description TEXT,
+  notes TEXT,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ
+);
 
--- Allow authenticated admin users full access
-CREATE POLICY "Admin all customers" ON customers FOR ALL TO authenticated USING (true);
-CREATE POLICY "Admin all orders" ON orders FOR ALL TO authenticated USING (true);
-CREATE POLICY "Admin all order_items" ON order_items FOR ALL TO authenticated USING (true);
-CREATE POLICY "Admin all order_payments" ON order_payments FOR ALL TO authenticated USING (true);
-CREATE POLICY "Admin all dishes" ON dishes FOR ALL TO authenticated USING (true);
-CREATE POLICY "Admin all campaigns" ON campaigns FOR ALL TO authenticated USING (true);
+-- 10. RENTAL DOCUMENTS / TRANSACTIONS TABLE
+CREATE TABLE IF NOT EXISTS rental_documents (
+  id VARCHAR(64) PRIMARY KEY,
+  rental_number VARCHAR(50) NOT NULL UNIQUE,
+  customer_name VARCHAR(255) NOT NULL,
+  mobile VARCHAR(20) NOT NULL,
+  address TEXT,
+  function_name VARCHAR(255),
+  document_date DATE NOT NULL,
+  function_date DATE NOT NULL,
+  rental_start_date DATE NOT NULL,
+  expected_return_date DATE NOT NULL,
+  actual_return_date DATE,
+  delivery_details TEXT,
+  items JSONB NOT NULL DEFAULT '[]'::jsonb,
+  subtotal NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  additional_charges NUMERIC(10, 2) DEFAULT 0,
+  discount NUMERIC(10, 2) DEFAULT 0,
+  security_deposit NUMERIC(10, 2) DEFAULT 0,
+  grand_total NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  advance_paid NUMERIC(10, 2) DEFAULT 0,
+  balance_due NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  status VARCHAR(50) NOT NULL DEFAULT 'Confirmed',
+  notes TEXT,
+  terms TEXT,
+  preferred_language VARCHAR(10) DEFAULT 'en',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ
+);
+
+-- 11. RENTAL RLS POLICIES
+ALTER TABLE rental_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rental_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rental_documents ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin all rental_categories" ON rental_categories FOR ALL TO authenticated USING (true);
+CREATE POLICY "Admin all rental_items" ON rental_items FOR ALL TO authenticated USING (true);
+CREATE POLICY "Admin all rental_documents" ON rental_documents FOR ALL TO authenticated USING (true);
+

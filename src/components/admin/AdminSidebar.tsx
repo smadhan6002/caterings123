@@ -15,6 +15,7 @@ import {
   Globe,
   ArrowLeft,
   ChefHat,
+  Boxes,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { siteConfig } from '../../config/site';
@@ -26,6 +27,7 @@ export type AdminView =
   | 'orders'
   | 'kitchen-sheet'
   | 'dishes'
+  | 'rental-items'
   | 'customers'
   | 'menu-pdf'
   | 'messages'
@@ -57,6 +59,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { view: 'orders', labelEn: 'Orders', labelTa: 'ஆர்டர்கள்', icon: <ClipboardList size={18} /> },
     { view: 'kitchen-sheet', labelEn: 'Kitchen Order Sheet', labelTa: 'சமையல் குறிப்பு தாள்', icon: <ChefHat size={18} /> },
     { view: 'dishes', labelEn: 'Dishes', labelTa: 'உணவு வகைகள்', icon: <UtensilsCrossed size={18} /> },
+    { view: 'rental-items', labelEn: 'Rental Items', labelTa: 'வாடகை பொருட்கள்', icon: <Boxes size={18} /> },
     { view: 'customers', labelEn: 'Customers', labelTa: 'வாடிக்கையாளர்கள்', icon: <Users size={18} /> },
     { view: 'menu-pdf', labelEn: 'Food Menu PDF', labelTa: 'உணவு மெனு PDF', icon: <FileDown size={18} /> },
     { view: 'messages', labelEn: 'Customer Messages', labelTa: 'வாடிக்கையாளர் செய்திகள்', icon: <MessageSquare size={18} /> },
@@ -188,6 +191,7 @@ export const AdminTopbar: React.FC<AdminTopbarProps> = ({ activeView, onMenuOpen
     orders: { en: 'Order Management', ta: 'ஆர்டர்கள் மேலாண்மை' },
     'kitchen-sheet': { en: 'Kitchen Order Sheet', ta: 'சமையல் குறிப்பு தாள்' },
     dishes: { en: 'Dish Management', ta: 'உணவு வகைகள் மேலாண்மை' },
+    'rental-items': { en: 'Rental Items Management', ta: 'வாடகை பொருட்கள் மேலாண்மை' },
     customers: { en: 'Customer Management', ta: 'வாடிக்கையாளர்கள் மேலாண்மை' },
     'menu-pdf': { en: 'Food Menu PDF', ta: 'உணவு மெனு PDF' },
     messages: { en: 'Customer Messages', ta: 'வாடிக்கையாளர் செய்திகள்' },

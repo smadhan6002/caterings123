@@ -54,7 +54,7 @@ export const FoodQuantitySelector: React.FC = () => {
 
   return (
     <section className="space-y-3">
-      <h3 className="text-sm font-medium text-slate-800">{t.foodQuantityTitle}</h3>
+      <h3 className="text-sm font-semibold text-blue-900">{t.foodQuantityTitle}</h3>
       
       <div className="space-y-2">
         {cartItems.map((item) => {
@@ -66,7 +66,7 @@ export const FoodQuantitySelector: React.FC = () => {
           if (isEditing) {
             return (
               <div key={item.id} className="border border-primary/30 rounded-xl p-3 bg-orange-50/50 space-y-2">
-                <p className="text-sm font-medium text-slate-800">{displayNm}</p>
+                <p className="text-sm font-semibold text-blue-900">{displayNm}</p>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -78,7 +78,7 @@ export const FoodQuantitySelector: React.FC = () => {
                     placeholder={t.enterQuantityKg}
                     autoFocus
                   />
-                  <span className="text-sm text-slate-600 self-center whitespace-nowrap">{t.kgUnit}</span>
+                  <span className="text-sm text-blue-800 self-center whitespace-nowrap">{t.kgUnit}</span>
                   <div className="flex gap-1 ml-auto">
                     <button
                       onClick={() => fq ? handleSaveEdit(item.id) : handleAdd(item.id, item.name)}
@@ -102,16 +102,16 @@ export const FoodQuantitySelector: React.FC = () => {
           // State 2: Has Quantity
           if (fq) {
             return (
-              <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 bg-slate-50 rounded-xl border border-slate-100">
+              <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 bg-blue-50/40 rounded-xl border border-blue-100">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-800 truncate">{displayNm}</p>
-                  <p className="text-xs text-slate-500">{fq.quantity} {t.kgUnit}</p>
+                  <p className="text-sm font-semibold text-blue-900 truncate">{displayNm}</p>
+                  <p className="text-xs text-blue-700/80 font-medium">{fq.quantity} {t.kgUnit}</p>
                 </div>
                 <div className="flex gap-1">
                   <button
                     onClick={() => startEdit(fq)}
                     aria-label={`Edit ${displayNm}`}
-                    className="p-1.5 text-slate-500 hover:text-primary hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-100/50 rounded-lg transition-colors cursor-pointer"
                   >
                     <Pencil size={13} />
                   </button>
@@ -129,8 +129,8 @@ export const FoodQuantitySelector: React.FC = () => {
 
           // State 3: No Quantity, show "Add Quantity" button
           return (
-            <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 border border-dashed border-slate-200 rounded-xl hover:border-slate-300 transition-colors">
-              <p className="text-sm font-medium text-slate-600 truncate flex-1">{displayNm}</p>
+            <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 border border-dashed border-blue-200 rounded-xl hover:border-blue-300 transition-colors">
+              <p className="text-sm font-medium text-blue-900 truncate flex-1">{displayNm}</p>
               <button
                 onClick={() => startAdd(item.id)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary hover:bg-orange-50 transition-colors cursor-pointer whitespace-nowrap"

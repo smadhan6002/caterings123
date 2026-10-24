@@ -36,14 +36,14 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
       
       {/* Content */}
       <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <h3 className="font-medium text-slate-800 flex-1 line-clamp-2">{displayName}</h3>
+        <h3 className="font-semibold text-blue-900 flex-1 line-clamp-2">{displayName}</h3>
         <button
           onClick={handleAdd}
           disabled={isAdded}
-          className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
+          className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-colors border ${
             isAdded
               ? 'bg-green-50 text-green-700 border-green-200 cursor-default'
-              : 'bg-white text-slate-700 border-gray-200 hover:bg-gray-50'
+              : 'bg-white text-blue-700 border-blue-200 hover:bg-blue-50 hover:text-blue-900 hover:border-blue-300'
           }`}
         >
           {isAdded ? (

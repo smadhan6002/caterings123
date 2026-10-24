@@ -7,6 +7,7 @@ import {
   Plus,
   FileDown,
   ArrowRight,
+  Boxes,
 } from 'lucide-react';
 import { orderService, getOrderTotalPaid, getOrderBalanceDue } from '../../services/orderService';
 import { customerService } from '../../services/customerService';
@@ -93,6 +94,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
             >
               <Plus size={15} />
               <span>{isTa ? 'புதிய ஆர்டர்' : 'Add Order'}</span>
+            </button>
+            <button
+              onClick={() => onNavigate('rental-items')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold shadow-xs transition-colors cursor-pointer border border-slate-200"
+            >
+              <Boxes size={15} className="text-primary" />
+              <span>{isTa ? 'வாடகை பொருட்கள்' : 'Rental Items'}</span>
             </button>
             <button
               onClick={() => onNavigate('menu-pdf')}

@@ -92,8 +92,8 @@ export const AdminMenuPDF: React.FC = () => {
           <CheckCircle2 size={20} className="text-green-600 flex-shrink-0" />
           <span>
             {isTa
-              ? 'உணவு மெனு PDF வெற்றிகரமாகப் பதிவிறக்கப்பட்டது! (Anapuruna_Catering_Food_Menu.pdf)'
-              : 'Food Menu PDF generated and downloaded successfully! (Anapuruna_Catering_Food_Menu.pdf)'}
+              ? 'உணவு மெனு PDF வெற்றிகரமாகப் பதிவிறக்கப்பட்டது! (Annapoorna_Catering_Food_Menu.pdf)'
+              : 'Food Menu PDF generated and downloaded successfully! (Annapoorna_Catering_Food_Menu.pdf)'}
           </span>
         </div>
       )}

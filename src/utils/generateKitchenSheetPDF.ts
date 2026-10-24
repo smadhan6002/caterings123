@@ -251,7 +251,7 @@ function generateEnglishVectorPDF(sheet: KitchenOrderSheet): void {
   doc.text('Verified & Dispatched by: ________________', 14 + signColW * 2, y + 8);
 
   // Save PDF
-  doc.save(`Kitchen-Order-${sheet.orderId}.pdf`);
+  doc.save(`Annapoorna-Kitchen-Order-${sheet.orderId}.pdf`);
 }
 
 /**
@@ -335,7 +335,7 @@ async function generateTamilCanvasPDF(
 
     ctx.font = '14px "Noto Sans Tamil", "Inter", sans-serif';
     ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(`Ph: +91 ${siteConfig.whatsappNumber}  •  அனபூர்ணா பாரம்பரிய கேட்டரிங் சர்வீஸ்`, 160, y + 96);
+    ctx.fillText(`Ph: +91 ${siteConfig.whatsappNumber}  •  அன்னபூர்ணா பாரம்பரிய கேட்டரிங் சர்வீஸ்`, 160, y + 96);
 
     // Header Right: Order ID badge
     ctx.fillStyle = '#FFFFFF';
@@ -599,7 +599,7 @@ async function generateTamilCanvasPDF(
     }
   }
 
-  doc.save(`Kitchen-Order-${sheet.orderId}.pdf`);
+  doc.save(`Annapoorna-Kitchen-Order-${sheet.orderId}.pdf`);
 }
 
 /**

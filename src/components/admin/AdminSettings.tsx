@@ -18,7 +18,7 @@ export const AdminSettings: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const isApiConfigured = campaignService.isApiConfigured();
 
-  const envSample = `# Anapuruna Catering Environment Configuration
+  const envSample = `# Annapoorna Catering Environment Configuration
 VITE_WHATSAPP_NUMBER=7200015790
 
 # Official WhatsApp Business Cloud API (Meta)

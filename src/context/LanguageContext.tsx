@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
 import { en, type Translations } from '../locales/en';
 import { ta } from '../locales/ta';
+import { dishService } from '../services/dishService';
 
 export type Language = 'en' | 'ta';
 
@@ -40,13 +41,17 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const t = locales[lang];
 
   const dishName = useCallback((id: string, canonicalName: string): string => {
+    if (lang === 'ta' && id) {
+      const customTa = dishService.getCustomTamilName(id);
+      if (customTa) return customTa;
+    }
     const trimmed = canonicalName?.trim();
     if (trimmed && t.dishTranslationsByEnglishName?.[trimmed]) {
       return t.dishTranslationsByEnglishName[trimmed];
     }
     if (id && t.dishes[id]) return t.dishes[id];
     return canonicalName || (id && t.dishes[id]) || '';
-  }, [t]);
+  }, [t, lang]);
 
   const categoryName = useCallback((id: string, canonicalName: string): string => {
     return t.categories[id] ?? canonicalName;

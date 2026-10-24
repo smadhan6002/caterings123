@@ -13,7 +13,7 @@ export const FoodImageDisclaimer: React.FC = () => {
       aria-label="Food image disclaimer"
     >
       <Info className="w-5 h-5 text-primary flex-shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" />
-      <p className="text-xs sm:text-sm text-slate-700 font-normal leading-relaxed">
+      <p className="text-xs sm:text-sm text-blue-950 font-medium leading-relaxed">
         {t.imageDisclaimer}
       </p>
     </div>

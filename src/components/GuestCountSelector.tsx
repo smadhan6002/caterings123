@@ -35,8 +35,8 @@ export const GuestCountSelector: React.FC = () => {
             className={cn(
               "px-4 py-1.5 rounded-md text-sm transition-colors border",
               guestCount === preset && !isCustom
-                ? "bg-primary text-white border-primary"
-                : "bg-white text-slate-700 border-gray-200 hover:bg-gray-50"
+                ? "bg-primary text-white border-primary shadow-xs"
+                : "bg-white text-blue-900 border-blue-200 hover:bg-blue-50 font-medium"
             )}
           >
             {preset}
@@ -48,8 +48,8 @@ export const GuestCountSelector: React.FC = () => {
           className={cn(
             "px-4 py-1.5 rounded-md text-sm transition-colors border",
             currentIsCustom
-              ? "bg-primary text-white border-primary"
-              : "bg-white text-slate-700 border-gray-200 hover:bg-gray-50"
+              ? "bg-primary text-white border-primary shadow-xs"
+              : "bg-white text-blue-900 border-blue-200 hover:bg-blue-50 font-medium"
           )}
         >
           {t.custom}

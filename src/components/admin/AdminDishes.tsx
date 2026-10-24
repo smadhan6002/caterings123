@@ -9,12 +9,14 @@ import {
   AlertTriangle,
   Layers,
   Search,
+  Eye,
+  EyeOff,
+  Filter,
 } from 'lucide-react';
 import { categories as staticCategories } from '../../data/menu';
-import { dishService } from '../../services/dishService';
-import { MEASUREMENT_UNITS, getDishUnitConfig } from '../../data/units';
+import { dishService, type UnifiedDish } from '../../services/dishService';
+import { MEASUREMENT_UNITS } from '../../data/units';
 import { useLanguage } from '../../context/LanguageContext';
-import type { AdminDish } from '../../types/admin';
 
 const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB limit for base64 storage
 
@@ -46,67 +48,89 @@ function resizeImage(file: File, maxPx = 600): Promise<string> {
 }
 
 interface DishFormData {
+  id?: string;
   name: string;
+  nameTa: string;
   categoryId: string;
   imagePreview: string;
   imageFile: File | null;
   defaultUnit: string;
+  isActive: boolean;
+  isBuiltIn?: boolean;
 }
 
 const emptyForm = (): DishFormData => ({
   name: '',
+  nameTa: '',
   categoryId: staticCategories[0]?.id ?? '',
   imagePreview: '',
   imageFile: null,
   defaultUnit: 'Pieces',
+  isActive: true,
+  isBuiltIn: false,
 });
 
 export const AdminDishes: React.FC = () => {
-  const { lang, dishName: getDishNameTa } = useLanguage();
+  const { lang, dishName: getDishNameTa, t } = useLanguage();
   const isTa = lang === 'ta';
 
-  const [activeTab, setActiveTab] = useState<'dishes' | 'units'>('dishes');
-  const [adminDishes, setAdminDishes] = useState<AdminDish[]>([]);
+  const [activeTab, setActiveTab] = useState<'all' | 'admin' | 'deactivated' | 'units'>('all');
+  const [dishes, setDishes] = useState<UnifiedDish[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingDish, setEditingDish] = useState<UnifiedDish | null>(null);
   const [form, setForm] = useState<DishFormData>(emptyForm());
   const [formError, setFormError] = useState('');
   const [saving, setSaving] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<UnifiedDish | null>(null);
   const [toast, setToast] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Search & Filter
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   // Unit configuration search
   const [unitSearch, setUnitSearch] = useState('');
   const [unitCategoryFilter, setUnitCategoryFilter] = useState('all');
 
-  const allCategories = staticCategories.map((c) => ({ id: c.id, name: c.name }));
+  const allCategories = staticCategories.map((c) => ({
+    id: c.id,
+    name: c.name,
+    nameTa: t.categories?.[c.id] || c.name,
+  }));
+
+  function loadDishes() {
+    setDishes(dishService.getAllDishes());
+  }
 
   useEffect(() => {
-    setAdminDishes(dishService.getAll());
+    loadDishes();
   }, []);
 
   function showToast(msg: string) {
     setToast(msg);
-    setTimeout(() => setToast(''), 2500);
+    setTimeout(() => setToast(''), 3000);
   }
 
   function openAdd() {
-    setEditingId(null);
+    setEditingDish(null);
     setForm(emptyForm());
     setFormError('');
     setShowForm(true);
   }
 
-  function openEdit(dish: AdminDish) {
-    setEditingId(dish.id);
-    const unitCfg = dishService.getDishUnit(dish.id) || getDishUnitConfig(dish.categoryId);
+  function openEdit(dish: UnifiedDish) {
+    setEditingDish(dish);
     setForm({
+      id: dish.id,
       name: dish.name,
+      nameTa: dish.nameTa || getDishNameTa(dish.id, dish.name),
       categoryId: dish.categoryId,
       imagePreview: dish.image,
       imageFile: null,
-      defaultUnit: dish.defaultUnit || unitCfg.defaultUnit,
+      defaultUnit: dish.defaultUnit || 'Pieces',
+      isActive: dish.isActive,
+      isBuiltIn: dish.isBuiltIn,
     });
     setFormError('');
     setShowForm(true);
@@ -114,7 +138,7 @@ export const AdminDishes: React.FC = () => {
 
   function closeForm() {
     setShowForm(false);
-    setEditingId(null);
+    setEditingDish(null);
     setForm(emptyForm());
     setFormError('');
   }
@@ -123,7 +147,7 @@ export const AdminDishes: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      setFormError('Please select a valid image file (JPG, PNG, WEBP).');
+      setFormError(isTa ? 'செல்லுபடியாகும் படக் கோப்பைத் தேர்ந்தெடுக்கவும் (JPG, PNG, WEBP).' : 'Please select a valid image file (JPG, PNG, WEBP).');
       return;
     }
     setFormError('');
@@ -133,116 +157,137 @@ export const AdminDishes: React.FC = () => {
         : await fileToBase64(file);
       setForm((f) => ({ ...f, imagePreview: preview, imageFile: file }));
     } catch {
-      setFormError('Failed to load image. Try a different file.');
+      setFormError(isTa ? 'படத்தை ஏற்றுவதில் தோல்வி. வேறு கோப்பை முயற்சிக்கவும்.' : 'Failed to load image. Try a different file.');
     }
   }
 
   async function handleSave() {
     setFormError('');
-    if (!form.name.trim()) { setFormError('Dish name is required.'); return; }
-    if (!form.categoryId) { setFormError('Please select a category.'); return; }
-    if (!form.imagePreview) { setFormError('Please upload a dish image.'); return; }
+    if (!form.name.trim()) {
+      setFormError(isTa ? 'உணவின் ஆங்கிலப் பெயர் அவசியம்.' : 'Dish English name is required.');
+      return;
+    }
+    if (!form.categoryId) {
+      setFormError(isTa ? 'தயவுசெய்து ஒரு உணவுப் பிரிவைத் தேர்ந்தெடுக்கவும்.' : 'Please select a category.');
+      return;
+    }
+    if (!form.imagePreview) {
+      setFormError(isTa ? 'தயவுசெய்து உணவுப் புகைப்படத்தை பதிவேற்றவும்.' : 'Please upload or provide a dish image.');
+      return;
+    }
 
     setSaving(true);
     try {
-      if (editingId) {
-        dishService.update(editingId, {
+      if (editingDish) {
+        // Edit existing dish (built-in or custom)
+        dishService.updateDish(editingDish.id, {
           name: form.name.trim(),
+          nameTa: form.nameTa.trim() || undefined,
           categoryId: form.categoryId,
           image: form.imagePreview,
           defaultUnit: form.defaultUnit,
+          isActive: form.isActive,
         });
-        dishService.setUnitOverride(editingId, form.defaultUnit);
-        showToast('Dish updated successfully.');
+        showToast(isTa ? 'உணவு விவரங்கள் வெற்றிகரமாக புதுப்பிக்கப்பட்டன!' : 'Dish updated successfully.');
       } else {
-        const added = dishService.add({
+        // Add new custom dish
+        dishService.add({
           name: form.name.trim(),
+          nameTa: form.nameTa.trim() || undefined,
           categoryId: form.categoryId,
           image: form.imagePreview,
           defaultUnit: form.defaultUnit,
         });
-        dishService.setUnitOverride(added.id, form.defaultUnit);
-        showToast('Dish added successfully.');
+        showToast(isTa ? 'புதிய உணவு வெற்றிகரமாக சேர்க்கப்பட்டது!' : 'New dish added successfully.');
       }
-      setAdminDishes(dishService.getAll());
+      loadDishes();
       closeForm();
     } finally {
       setSaving(false);
     }
   }
 
-  function handleDelete(id: string) {
-    dishService.delete(id);
-    setAdminDishes(dishService.getAll());
+  function handleToggleActive(dish: UnifiedDish) {
+    if (dish.isActive) {
+      dishService.deactivateDish(dish.id);
+      showToast(isTa ? `"${dish.name}" இணையதளத்திலிருந்து மறைக்கப்பட்டது.` : `"${dish.name}" hidden from customer menu.`);
+    } else {
+      dishService.reactivateDish(dish.id);
+      showToast(isTa ? `"${dish.name}" மீண்டும் இணையதளத்தில் காட்டப்படும்.` : `"${dish.name}" reactivated on customer menu.`);
+    }
+    loadDishes();
+  }
+
+  function handleDelete(dish: UnifiedDish) {
+    dishService.deleteDish(dish.id);
+    loadDishes();
     setDeleteConfirm(null);
-    showToast('Dish deleted.');
+    showToast(isTa ? `"${dish.name}" நீக்கப்பட்டது (வரலாற்று ஆர்டர்கள் பாதுகாக்கப்பட்டுள்ளன).` : `"${dish.name}" removed (historical orders preserved).`);
   }
 
   function handleSetDishUnit(dishId: string, unit: string) {
     dishService.setUnitOverride(dishId, unit);
-    setAdminDishes(dishService.getAll());
-    showToast(`Unit updated to ${unit}`);
+    loadDishes();
+    showToast(isTa ? `அளவீட்டு அலகு ${unit} என புதுப்பிக்கப்பட்டது.` : `Measurement unit updated to ${unit}`);
   }
 
-  // All combined dishes for unit management
+  // Filtered dishes
+  const filteredDishes = useMemo(() => {
+    let list = [...dishes];
+
+    // Tab filter
+    if (activeTab === 'admin') {
+      list = list.filter((d) => d.isAdminAdded);
+    } else if (activeTab === 'deactivated') {
+      list = list.filter((d) => !d.isActive);
+    }
+
+    // Category filter
+    if (categoryFilter !== 'all') {
+      list = list.filter((d) => d.categoryId === categoryFilter);
+    }
+
+    // Search query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter((d) => {
+        const enMatch = d.name.toLowerCase().includes(q);
+        const taMatch = (d.nameTa || '').toLowerCase().includes(q);
+        const catMatch = (d.categoryName || '').toLowerCase().includes(q);
+        const idMatch = d.id.toLowerCase().includes(q);
+        return enMatch || taMatch || catMatch || idMatch;
+      });
+    }
+
+    return list;
+  }, [dishes, activeTab, categoryFilter, searchQuery]);
+
+  // Unit configuration items
   const allDishesForUnits = useMemo(() => {
-    const list: { id: string; name: string; categoryId: string; categoryName: string; defaultUnit: string }[] = [];
-    staticCategories.forEach((cat) => {
-      cat.items.forEach((item) => {
-        const unitOverride = dishService.getDishUnit(item.id);
-        const unitCfg = unitOverride || getDishUnitConfig(cat.id);
-        list.push({
-          id: item.id,
-          name: item.name,
-          categoryId: cat.id,
-          categoryName: cat.name,
-          defaultUnit: unitCfg.defaultUnit,
-        });
-      });
-    });
-
-    adminDishes.forEach((ad) => {
-      const catName = staticCategories.find((c) => c.id === ad.categoryId)?.name || ad.categoryId;
-      const unitOverride = dishService.getDishUnit(ad.id);
-      const unitCfg = unitOverride || getDishUnitConfig(ad.categoryId);
-      list.push({
-        id: ad.id,
-        name: ad.name,
-        categoryId: ad.categoryId,
-        categoryName: catName,
-        defaultUnit: ad.defaultUnit || unitCfg.defaultUnit,
-      });
-    });
-
-    let res = list;
+    let list = [...dishes];
     if (unitCategoryFilter !== 'all') {
-      res = res.filter((d) => d.categoryId === unitCategoryFilter);
+      list = list.filter((d) => d.categoryId === unitCategoryFilter);
     }
     if (unitSearch.trim()) {
-      const q = unitSearch.toLowerCase();
-      res = res.filter((d) => {
+      const q = unitSearch.toLowerCase().trim();
+      list = list.filter((d) => {
         const enMatch = d.name.toLowerCase().includes(q);
-        const taMatch = getDishNameTa(d.id, d.name).toLowerCase().includes(q);
+        const taMatch = (d.nameTa || '').toLowerCase().includes(q);
         return enMatch || taMatch;
       });
     }
+    return list;
+  }, [dishes, unitCategoryFilter, unitSearch]);
 
-    return res;
-  }, [adminDishes, unitCategoryFilter, unitSearch, getDishNameTa]);
-
-  // Group admin dishes by category
-  const grouped = allCategories
-    .map((cat) => ({
-      ...cat,
-      dishes: adminDishes.filter((d) => d.categoryId === cat.id),
-    }))
-    .filter((g) => g.dishes.length > 0);
+  const activeCount = dishes.filter((d) => d.isActive).length;
+  const adminCount = dishes.filter((d) => d.isAdminAdded).length;
+  const deactivatedCount = dishes.filter((d) => !d.isActive).length;
 
   return (
     <div className="p-4 md:p-6 space-y-6">
-      {/* Toast */}
+      {/* Toast Notification */}
       {toast && (
-        <div className="fixed top-4 right-4 z-[200] bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 text-sm">
+        <div className="fixed top-4 right-4 z-[200] bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-2 text-sm border border-slate-700 animate-in fade-in slide-in-from-top-2 duration-200">
           <Check size={16} className="text-green-400" />
           <span>{toast}</span>
         </div>
@@ -251,146 +296,315 @@ export const AdminDishes: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">
-            {isTa ? 'உணவு வகைகள் & அளவீடுகள் மேலாண்மை' : 'Dish Management & Measurement Units'}
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+            {isTa ? 'உணவு வகைகள் மேலாண்மை' : 'Dish & Menu Management'}
           </h2>
-          <p className="text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             {isTa
-              ? 'புதிய உணவுகளைச் சேர்க்கவும் மற்றும் ஒவ்வொரு உணவுக்கும் இயல்புநிலை அளவீட்டு அலகை (Units) கட்டமைக்கவும்'
-              : 'Add custom dishes and configure default measurement units (kg, litres, cups, pieces) for each dish'}
+              ? 'உணவுகளின் ஆங்கிலம் & தமிழ் பெயர்கள், பிரிவுகள், புகைப்படங்கள் மற்றும் அளவீட்டு அலகுகளை நிர்வகிக்கவும்'
+              : 'Manage existing dishes, Tamil/English names, categories, images, and measurement units'}
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
-          {/* Tab Switcher */}
-          <div className="flex bg-slate-100 p-1 rounded-xl text-xs sm:text-sm font-semibold">
-            <button
-              onClick={() => setActiveTab('dishes')}
-              className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                activeTab === 'dishes' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
-              }`}
-            >
-              {isTa ? 'நிர்வாக உணவுகள்' : 'Admin Dishes'}
-            </button>
-            <button
-              onClick={() => setActiveTab('units')}
-              className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                activeTab === 'units' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
-              }`}
-            >
-              {isTa ? 'அளவீட்டு அலகுகள் (Units)' : 'Dish Units Config'}
-            </button>
-          </div>
-
+        <div className="flex items-center gap-2.5 flex-wrap">
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-sm transition-colors cursor-pointer"
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-all duration-150 cursor-pointer"
           >
             <Plus size={18} />
-            <span>{isTa ? 'உணவு சேர்' : 'Add Dish'}</span>
+            <span>{isTa ? 'புதிய உணவு சேர்க்க' : 'Add New Dish'}</span>
           </button>
         </div>
       </div>
 
-      {/* TAB 1: ADMIN DISHES */}
-      {activeTab === 'dishes' && (
-        <>
-          {grouped.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-slate-100 py-16 text-center text-slate-400">
-              <Layers size={40} className="mx-auto mb-3 text-slate-200" />
-              <p className="text-sm font-semibold text-slate-700">No admin dishes added yet.</p>
-              <p className="text-xs text-slate-400 mt-1">Built-in menu dishes are active on the website. Click "Add Dish" to add custom specialties.</p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {grouped.map((group) => (
-                <div key={group.id} className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-                  <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                    <h3 className="font-bold text-slate-900 text-sm sm:text-base">{group.name}</h3>
-                    <span className="text-xs font-semibold bg-orange-50 text-primary px-2.5 py-0.5 rounded-full">
-                      {group.dishes.length} dish(es)
-                    </span>
-                  </div>
+      {/* Tabs & Counts */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200">
+        <button
+          onClick={() => setActiveTab('all')}
+          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
+            activeTab === 'all'
+              ? 'border-primary text-primary bg-orange-50/50'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <span>{isTa ? 'அனைத்து உணவுகள்' : 'All Dishes'}</span>
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">
+            {activeCount}/{dishes.length}
+          </span>
+        </button>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {group.dishes.map((dish) => (
-                      <div key={dish.id} className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-                        <div className="h-36 bg-slate-100 overflow-hidden relative">
-                          <img src={dish.image} alt={dish.name} className="w-full h-full object-cover" />
-                          <span className="absolute top-2 left-2 bg-orange-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
-                            {dish.defaultUnit || 'Custom'}
-                          </span>
-                        </div>
-                        <div className="p-3 flex items-center justify-between gap-2">
-                          <div className="min-w-0">
-                            <p className="font-bold text-slate-900 text-sm truncate">{dish.name}</p>
-                            <span className="text-[11px] text-slate-400 font-mono">{dish.id}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <button onClick={() => openEdit(dish)} className="p-1.5 text-slate-500 hover:text-primary rounded-lg">
-                              <Pencil size={15} />
-                            </button>
-                            <button onClick={() => setDeleteConfirm(dish.id)} className="p-1.5 text-slate-400 hover:text-red-600 rounded-lg">
-                              <Trash2 size={15} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+        <button
+          onClick={() => setActiveTab('admin')}
+          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
+            activeTab === 'admin'
+              ? 'border-primary text-primary bg-orange-50/50'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <span>{isTa ? 'நிர்வாகியால் சேர்க்கப்பட்டவை' : 'Admin Custom'}</span>
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-orange-100 text-primary font-bold">
+            {adminCount}
+          </span>
+        </button>
 
-      {/* TAB 2: MEASUREMENT UNITS CONFIGURATION (REQUIREMENT 2.6) */}
-      {activeTab === 'units' && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+        <button
+          onClick={() => setActiveTab('deactivated')}
+          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
+            activeTab === 'deactivated'
+              ? 'border-primary text-primary bg-orange-50/50'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <span>{isTa ? 'மறைக்கப்பட்ட உணவுகள்' : 'Deactivated / Hidden'}</span>
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">
+            {deactivatedCount}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('units')}
+          className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
+            activeTab === 'units'
+              ? 'border-primary text-primary bg-orange-50/50'
+              : 'border-transparent text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          <span>{isTa ? 'அளவீட்டு அலகுகள் (Units Config)' : 'Units Config'}</span>
+        </button>
+      </div>
+
+      {/* DISHES TAB CONTENT (ALL / ADMIN / DEACTIVATED) */}
+      {activeTab !== 'units' && (
+        <div className="space-y-4">
+          {/* Search & Filter Bar */}
+          <div className="bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row gap-3 items-center justify-between">
             <div className="relative flex-1 w-full">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder={isTa ? 'உணவுப் பெயரைத் தேடி அலகை மாற்றவும்...' : 'Search dish to change measurement unit (Coffee, Tea, Sweets, Rice…)'}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isTa ? 'உணவு பெயர் (தமிழ் / English) அல்லது எண் மூலம் தேடவும்...' : 'Search by dish name (English or தமிழ்) or ID…'}
+                className="w-full pl-9 pr-4 py-2.5 text-xs sm:text-sm bg-slate-50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Filter size={15} className="text-slate-400 hidden sm:block" />
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="w-full sm:w-56 px-3 py-2.5 text-xs sm:text-sm font-medium bg-slate-50 focus:bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+              >
+                <option value="all">{isTa ? 'அனைத்துப் பிரிவுகள் (All Categories)' : 'All Categories'}</option>
+                {allCategories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {isTa ? c.nameTa : c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Results Summary */}
+          <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+            <span>
+              {isTa ? 'காட்டப்படும் உணவுகள்:' : 'Showing dishes:'} <strong className="text-slate-800">{filteredDishes.length}</strong>
+            </span>
+            {categoryFilter !== 'all' && (
+              <button
+                onClick={() => setCategoryFilter('all')}
+                className="text-primary hover:underline font-medium cursor-pointer"
+              >
+                {isTa ? 'பிரிவு வடிகட்டியை நீக்கு' : 'Clear filter'}
+              </button>
+            )}
+          </div>
+
+          {/* Dishes Grid */}
+          {filteredDishes.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200/80 py-16 text-center text-slate-400 p-4">
+              <Layers size={44} className="mx-auto mb-3 text-slate-300" />
+              <p className="text-sm font-bold text-slate-800">
+                {isTa ? 'உணவுகள் எதுவும் கிடைக்கவில்லை' : 'No dishes found'}
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                {isTa ? 'உங்கள் தேடல் அல்லது வடிகட்டியை மாற்றி முயற்சிக்கவும்.' : 'Try adjusting your search query or category filter.'}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredDishes.map((dish) => {
+                const taName = dish.nameTa || getDishNameTa(dish.id, dish.name);
+                return (
+                  <div
+                    key={dish.id}
+                    className={`bg-white rounded-2xl border transition-all duration-150 overflow-hidden shadow-xs hover:shadow-md flex flex-col ${
+                      dish.isActive ? 'border-slate-200/80' : 'border-amber-200 bg-amber-50/20 opacity-80'
+                    }`}
+                  >
+                    {/* Image Header with Badges */}
+                    <div className="h-40 bg-slate-100 overflow-hidden relative group">
+                      <img
+                        src={dish.image}
+                        alt={dish.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          // Fallback placeholder
+                          (e.currentTarget as HTMLImageElement).src =
+                            'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>';
+                        }}
+                      />
+                      {/* Top Badges */}
+                      <div className="absolute top-2 left-2 flex flex-col gap-1 items-start">
+                        <span className="bg-slate-900/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                          {dish.defaultUnit}
+                        </span>
+                        {dish.isAdminAdded ? (
+                          <span className="bg-orange-600/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                            {isTa ? 'நிர்வாக உணவு' : 'Custom'}
+                          </span>
+                        ) : (
+                          <span className="bg-blue-600/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                            {isTa ? 'முதன்மை மெனு' : 'Built-in'}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Active / Inactive Badge */}
+                      <div className="absolute top-2 right-2">
+                        {dish.isActive ? (
+                          <span className="bg-green-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                            {isTa ? 'செயலில்' : 'Active'}
+                          </span>
+                        ) : (
+                          <span className="bg-amber-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs flex items-center gap-1">
+                            <EyeOff size={11} />
+                            {isTa ? 'மறைக்கப்பட்டது' : 'Hidden'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Dish Info */}
+                    <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-bold text-slate-900 text-sm leading-snug">
+                            {dish.name}
+                          </h3>
+                        </div>
+                        {taName && (
+                          <p className="text-xs font-semibold text-primary mt-0.5 font-tamil">
+                            {taName}
+                          </p>
+                        )}
+                        <p className="text-[11px] text-slate-500 mt-1 font-medium flex items-center gap-1">
+                          <span>{dish.categoryName}</span>
+                          <span>•</span>
+                          <span className="font-mono text-[10px] text-slate-400">{dish.id}</span>
+                        </p>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between gap-1">
+                        <button
+                          onClick={() => handleToggleActive(dish)}
+                          title={dish.isActive ? (isTa ? 'இணையதளத்திலிருந்து மறை' : 'Hide from website') : (isTa ? 'மீண்டும் இயக்கு' : 'Reactivate on website')}
+                          className={`p-1.5 rounded-lg text-xs font-medium flex items-center gap-1 cursor-pointer transition-colors ${
+                            dish.isActive
+                              ? 'text-slate-500 hover:text-amber-700 hover:bg-amber-50'
+                              : 'text-green-700 bg-green-50 hover:bg-green-100'
+                          }`}
+                        >
+                          {dish.isActive ? <EyeOff size={15} /> : <Eye size={15} />}
+                          <span className="text-[11px]">
+                            {dish.isActive ? (isTa ? 'மறை' : 'Hide') : (isTa ? 'இயக்கு' : 'Show')}
+                          </span>
+                        </button>
+
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => openEdit(dish)}
+                            title={isTa ? 'உணவைத் திருத்த' : 'Edit dish'}
+                            className="p-1.5 text-slate-600 hover:text-primary hover:bg-orange-50 rounded-lg cursor-pointer transition-colors flex items-center gap-1"
+                          >
+                            <Pencil size={15} />
+                            <span className="text-[11px] font-medium">{isTa ? 'திருத்து' : 'Edit'}</span>
+                          </button>
+
+                          <button
+                            onClick={() => setDeleteConfirm(dish)}
+                            title={isTa ? 'நீக்க / செயலிழக்க' : 'Deactivate / Remove'}
+                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer transition-colors"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 4: MEASUREMENT UNITS CONFIGURATION */}
+      {activeTab === 'units' && (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-5 sm:p-6 space-y-6">
+          <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+            <div className="relative flex-1 w-full">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder={isTa ? 'உணவுப் பெயரைத் தேடி அலகை மாற்றவும் (Coffee, Tea, Sweets, Rice…)' : 'Search dish to change measurement unit (Coffee, Tea, Sweets, Rice…)'}
                 value={unitSearch}
                 onChange={(e) => setUnitSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
 
             <select
               value={unitCategoryFilter}
               onChange={(e) => setUnitCategoryFilter(e.target.value)}
-              className="w-full sm:w-auto px-3 py-2 text-xs sm:text-sm font-medium bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full sm:w-auto px-3 py-2 text-xs sm:text-sm font-medium bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
             >
-              <option value="all">All Categories</option>
-              {staticCategories.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+              <option value="all">{isTa ? 'அனைத்து பிரிவுகள்' : 'All Categories'}</option>
+              {allCategories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {isTa ? c.nameTa : c.name}
+                </option>
               ))}
             </select>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 border-b border-slate-100 text-xs text-slate-600 uppercase font-semibold">
+          <div className="overflow-x-auto border border-slate-100 rounded-xl">
+            <table className="w-full text-xs sm:text-sm">
+              <thead className="bg-slate-50 border-b border-slate-200 text-xs text-slate-700 uppercase font-semibold">
                 <tr>
-                  <th className="px-4 py-3 text-left">Dish Name</th>
-                  <th className="px-4 py-3 text-left">Category</th>
-                  <th className="px-4 py-3 text-left">Current Default Unit</th>
-                  <th className="px-4 py-3 text-left">Change Unit</th>
+                  <th className="px-4 py-3 text-left">{isTa ? 'உணவு பெயர்' : 'Dish Name'}</th>
+                  <th className="px-4 py-3 text-left">{isTa ? 'பிரிவு' : 'Category'}</th>
+                  <th className="px-4 py-3 text-left">{isTa ? 'தற்போதைய அலகு' : 'Current Default Unit'}</th>
+                  <th className="px-4 py-3 text-left">{isTa ? 'அலகு மாற்று' : 'Change Unit'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {allDishesForUnits.slice(0, 50).map((dish) => {
-                  const taName = getDishNameTa(dish.id, dish.name);
+                {allDishesForUnits.map((dish) => {
+                  const taName = dish.nameTa || getDishNameTa(dish.id, dish.name);
                   return (
-                    <tr key={dish.id} className="hover:bg-slate-50/80">
+                    <tr key={dish.id} className="hover:bg-slate-50/80 transition-colors">
                       <td className="px-4 py-3">
                         <p className="font-bold text-slate-900">{dish.name}</p>
                         {taName && taName !== dish.name && (
-                          <p className="text-xs text-slate-400">{taName}</p>
+                          <p className="text-xs text-primary font-tamil">{taName}</p>
                         )}
                       </td>
                       <td className="px-4 py-3 text-slate-600 text-xs">{dish.categoryName}</td>
@@ -403,11 +617,11 @@ export const AdminDishes: React.FC = () => {
                         <select
                           value={dish.defaultUnit}
                           onChange={(e) => handleSetDishUnit(dish.id, e.target.value)}
-                          className="px-2.5 py-1 text-xs font-semibold bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
+                          className="px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary/40 cursor-pointer"
                         >
                           {MEASUREMENT_UNITS.map((u) => (
                             <option key={u.id} value={u.id}>
-                              {u.labelEn}
+                              {isTa ? u.labelTa : u.labelEn}
                             </option>
                           ))}
                         </select>
@@ -418,129 +632,240 @@ export const AdminDishes: React.FC = () => {
               </tbody>
             </table>
           </div>
-          {allDishesForUnits.length > 50 && (
-            <p className="text-center text-xs text-slate-400 pt-2">
-              Showing top 50 matches. Use search above to find specific items.
-            </p>
-          )}
         </div>
       )}
 
-      {/* Add / Edit Dish Modal */}
+      {/* ADD / EDIT DISH MODAL */}
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={closeForm} />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 overflow-hidden z-10 max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-              <h3 className="font-bold text-slate-900 text-base">
-                {editingId ? 'Edit Dish' : 'Add New Dish'}
-              </h3>
-              <button onClick={closeForm} className="text-slate-400 hover:text-slate-700 p-1">
-                <X size={20} />
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full max-h-[92vh] flex flex-col border border-slate-200 animate-in fade-in zoom-in-95 duration-150 my-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 text-primary flex items-center justify-center">
+                  {editingDish ? <Pencil size={16} /> : <Plus size={18} />}
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base sm:text-lg">
+                    {editingDish
+                      ? (isTa ? 'உணவு விவரங்களைத் திருத்து' : 'Edit Dish Details')
+                      : (isTa ? 'புதிய உணவைச் சேர்க்க' : 'Add New Dish')}
+                  </h3>
+                  {editingDish && (
+                    <p className="text-[11px] text-slate-400 font-mono">ID: {editingDish.id}</p>
+                  )}
+                </div>
+              </div>
+              <button onClick={closeForm} className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg cursor-pointer">
+                <X size={18} />
               </button>
             </div>
 
-            {formError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 text-sm mb-4 flex items-center gap-2">
-                <AlertTriangle size={14} /> {formError}
-              </div>
-            )}
+            {/* Modal Body */}
+            <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 text-xs sm:text-sm">
+              {formError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-xs flex items-center gap-2">
+                  <AlertTriangle size={15} className="flex-shrink-0" />
+                  <span>{formError}</span>
+                </div>
+              )}
 
-            <div className="space-y-4">
+              {/* English Name */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Dish Name *</label>
+                <label className="block font-semibold text-slate-800 mb-1">
+                  {isTa ? 'உணவின் பெயர் (ஆங்கிலத்தில்)' : 'Dish Name (English)'} <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  placeholder="e.g. Special Badam Halwa"
+                  placeholder={isTa ? 'உதாரணம்: Special Ghee Pongal' : 'e.g. Special Ghee Pongal'}
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 text-slate-900 font-medium"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Category *</label>
-                  <select
-                    value={form.categoryId}
-                    onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    {allCategories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>{cat.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Default Unit *</label>
-                  <select
-                    value={form.defaultUnit}
-                    onChange={(e) => setForm((f) => ({ ...f, defaultUnit: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/40"
-                  >
-                    {MEASUREMENT_UNITS.map((u) => (
-                      <option key={u.id} value={u.id}>{u.labelEn}</option>
-                    ))}
-                  </select>
-                </div>
+              {/* Tamil Name */}
+              <div>
+                <label className="block font-semibold text-slate-800 mb-1">
+                  {isTa ? 'உணவின் பெயர் (தமிழில்)' : 'Tamil Display Name (தமிழில்)'}
+                </label>
+                <input
+                  type="text"
+                  value={form.nameTa}
+                  onChange={(e) => setForm((f) => ({ ...f, nameTa: e.target.value }))}
+                  placeholder={isTa ? 'உதாரணம்: ஸ்பெஷல் நெய் பொங்கல்' : 'e.g. ஸ்பெஷல் நெய் பொங்கல்'}
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 text-slate-900 font-tamil font-medium"
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  {isTa ? 'வாடிக்கையாளர் இணையதளத்தில் தமிழ் மொழியைத் தேர்ந்தெடுக்கும் போது காட்டப்படும்.' : 'Displayed when customer switches website to Tamil.'}
+                </p>
               </div>
 
+              {/* Category */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Dish Image *
+                <label className="block font-semibold text-slate-800 mb-1">
+                  {isTa ? 'உணவுப் பிரிவு (Category)' : 'Menu Category'} <span className="text-red-500">*</span>
                 </label>
+                <select
+                  value={form.categoryId}
+                  onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white cursor-pointer font-medium"
+                >
+                  {allCategories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {isTa ? `${c.nameTa} (${c.name})` : `${c.name} (${c.nameTa})`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Measurement Unit */}
+              <div>
+                <label className="block font-semibold text-slate-800 mb-1">
+                  {isTa ? 'இயல்புநிலை அளவீட்டு அலகு (Default Unit)' : 'Default Measurement Unit'}
+                </label>
+                <select
+                  value={form.defaultUnit}
+                  onChange={(e) => setForm((f) => ({ ...f, defaultUnit: e.target.value }))}
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white cursor-pointer font-medium"
+                >
+                  {MEASUREMENT_UNITS.map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {isTa ? u.labelTa : u.labelEn}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Image Upload & Preview */}
+              <div>
+                <label className="block font-semibold text-slate-800 mb-1">
+                  {isTa ? 'உணவுப் புகைப்படம்' : 'Dish Image'} <span className="text-red-500">*</span>
+                </label>
+
                 {form.imagePreview ? (
-                  <div className="relative">
-                    <img src={form.imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-xl border border-slate-200" />
+                  <div className="relative rounded-xl overflow-hidden border border-slate-300 h-44 bg-slate-100 flex items-center justify-center">
+                    <img src={form.imagePreview} alt="Dish Preview" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => setForm((f) => ({ ...f, imagePreview: '', imageFile: null }))}
-                      className="absolute top-2 right-2 bg-white rounded-full p-1 shadow border border-slate-200 text-slate-500 hover:text-red-600"
+                      className="absolute top-2 right-2 bg-slate-900/80 hover:bg-slate-900 text-white p-1.5 rounded-full cursor-pointer transition-colors"
+                      title={isTa ? 'படத்தை நீக்கு' : 'Remove image'}
                     >
                       <X size={14} />
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      className="absolute bottom-2 right-2 bg-white/90 hover:bg-white text-slate-800 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-sm border border-slate-200 cursor-pointer"
+                    >
+                      {isTa ? 'படத்தை மாற்று' : 'Change Image'}
+                    </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
+                  <div
                     onClick={() => fileRef.current?.click()}
-                    className="w-full h-32 border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                    className="border-2 border-dashed border-slate-300 hover:border-primary rounded-xl p-6 text-center cursor-pointer bg-slate-50 hover:bg-orange-50/20 transition-colors"
                   >
-                    <UploadCloud size={24} />
-                    <span className="text-xs font-medium">Click to upload dish photo</span>
-                  </button>
+                    <UploadCloud size={32} className="mx-auto text-slate-400 mb-2" />
+                    <p className="text-xs font-semibold text-slate-700">
+                      {isTa ? 'புகைப்படத்தை தேர்ந்தெடுக்க கிளிக் செய்யவும்' : 'Click to select or upload dish photo'}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1">PNG, JPG, WEBP (Max 2MB)</p>
+                  </div>
                 )}
-                <input ref={fileRef} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/png, image/jpeg, image/webp"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </div>
 
-              <div className="flex gap-3 pt-3">
-                <button onClick={closeForm} className="flex-1 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50">
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={saving}
-                  className="flex-1 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm disabled:opacity-50"
-                >
-                  {saving ? 'Saving…' : 'Save Dish'}
-                </button>
+              {/* Active on Website Toggle */}
+              <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <div>
+                  <p className="font-semibold text-slate-900 text-xs sm:text-sm">
+                    {isTa ? 'இணையதளத்தில் நேரலையில் காட்டு' : 'Active on Customer Website'}
+                  </p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    {isTa
+                      ? 'செயலிழக்கச் செய்தால் வாடிக்கையாளருக்கு மெனுவில் காட்டப்படாது, ஆனால் பழைய ஆர்டர்கள் அப்படியே இருக்கும்.'
+                      : 'When disabled, customers will not see this dish, while preserving past order records.'}
+                  </p>
+                </div>
+                <input
+                  type="checkbox"
+                  checked={form.isActive}
+                  onChange={(e) => setForm((f) => ({ ...f, isActive: e.target.checked }))}
+                  className="w-5 h-5 accent-primary cursor-pointer rounded"
+                />
               </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 sm:p-5 border-t border-slate-200 flex items-center justify-end gap-3 bg-slate-50/50">
+              <button
+                type="button"
+                onClick={closeForm}
+                disabled={saving}
+                className="px-4 py-2 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl font-medium text-xs sm:text-sm cursor-pointer transition-colors"
+              >
+                {isTa ? 'ரத்து செய்' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={saving}
+                className="px-5 py-2 bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-sm cursor-pointer transition-colors disabled:opacity-60 flex items-center gap-1.5"
+              >
+                {saving ? (
+                  <>
+                    <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>{isTa ? 'சேமிக்கப்படுகிறது...' : 'Saving…'}</span>
+                  </>
+                ) : (
+                  <span>{isTa ? 'மாற்றங்களைச் சேமி' : 'Save Changes'}</span>
+                )}
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Delete Confirmation */}
+      {/* DELETE / DEACTIVATE CONFIRMATION MODAL */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)} />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 z-10">
-            <h3 className="font-semibold text-slate-900 mb-2">Delete Dish</h3>
-            <p className="text-sm text-slate-600 mb-5">Are you sure you want to delete this custom dish?</p>
-            <div className="flex gap-3">
-              <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-2.5 border border-slate-300 rounded-xl text-sm text-slate-700 hover:bg-slate-50">Cancel</button>
-              <button onClick={() => handleDelete(deleteConfirm)} className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium">Delete</button>
+        <div className="fixed inset-0 z-[160] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4 border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+            <div className="w-12 h-12 rounded-xl bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+              <AlertTriangle size={24} />
+            </div>
+
+            <div className="text-center">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">
+                {isTa ? 'உணவை நீக்க / மறைக்க வேண்டுமா?' : 'Remove or Deactivate Dish?'}
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 mt-2">
+                {isTa
+                  ? `"${deleteConfirm.name}" உணவை இணையதள மெனுவிலிருந்து நீக்க விரும்புகிறீர்களா? வரலாற்று ஆர்டர்கள் பாதுகாக்கப்படும்.`
+                  : `Are you sure you want to remove "${deleteConfirm.name}" from the active menu? Historical customer orders and records will remain completely intact.`}
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl font-medium text-xs sm:text-sm cursor-pointer"
+              >
+                {isTa ? 'ரத்து' : 'Cancel'}
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirm)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold text-xs sm:text-sm shadow-sm cursor-pointer"
+              >
+                {isTa ? 'ஆம், நீக்கு' : 'Confirm Remove'}
+              </button>
             </div>
           </div>
         </div>

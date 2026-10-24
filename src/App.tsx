@@ -123,11 +123,11 @@ function MainApp() {
       <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none p-3 sm:p-4 flex items-start justify-between">
         {/* Logo */}
         <div className="pointer-events-auto">
-          <a href="/" className="block">
+          <a href="/" className="block group" aria-label="Annapoorna Catering Home">
             <img 
               src={logoImg} 
-              alt="Kanchi Ambal Catering Logo" 
-              className="h-10 w-10 sm:h-12 sm:w-12 object-cover rounded-full shadow-md border-2 border-white/80" 
+              alt="Annapoorna Catering Logo" 
+              className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 object-contain rounded-full shadow-lg border-2 border-white/90 bg-white/95 p-1 transition-transform group-hover:scale-105 duration-200" 
             />
           </a>
         </div>

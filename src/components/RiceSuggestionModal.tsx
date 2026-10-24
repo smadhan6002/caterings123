@@ -110,9 +110,9 @@ export const RiceSuggestionModal: React.FC = () => {
           <div className="mb-4">
             <div className="flex items-center gap-2">
               <Sparkles size={18} className="text-primary" />
-              <h3 className="text-xl font-bold text-slate-900">{t.suggestedWithRice}</h3>
+              <h3 className="text-xl font-bold text-blue-950">{t.suggestedWithRice}</h3>
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-blue-800/80 mt-1 font-medium">
               {t.riceSubtitle}
             </p>
           </div>
@@ -126,18 +126,18 @@ export const RiceSuggestionModal: React.FC = () => {
               return (
                 <div
                   key={key}
-                  className="bg-slate-50 border border-slate-200/80 hover:border-slate-300 rounded-xl p-3 flex items-center justify-between gap-3 transition-colors"
+                  className="bg-blue-50/40 border border-blue-100 hover:border-blue-200 rounded-xl p-3 flex items-center justify-between gap-3 transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={item.image}
                       alt={displayName}
-                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-slate-200"
+                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-blue-200"
                       loading="lazy"
                     />
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-800 truncate">{displayName}</p>
-                      <p className="text-[11px] text-slate-500">{t.traditionalSide}</p>
+                      <p className="text-sm font-semibold text-blue-900 truncate">{displayName}</p>
+                      <p className="text-[11px] text-blue-700/80 font-medium">{t.traditionalSide}</p>
                     </div>
                   </div>
 
@@ -147,7 +147,7 @@ export const RiceSuggestionModal: React.FC = () => {
                     className={`flex-shrink-0 flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                       added
                         ? 'bg-green-100 text-green-800 border border-green-200 cursor-default'
-                        : 'bg-white text-slate-800 border border-slate-300 hover:border-primary hover:bg-orange-50 hover:text-primary active:scale-95 shadow-xs cursor-pointer'
+                        : 'bg-white text-blue-700 border border-blue-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-900 active:scale-95 shadow-xs cursor-pointer'
                     }`}
                   >
                     {added ? (

@@ -592,7 +592,7 @@ export const AdminCampaigns: React.FC = () => {
               Official WhatsApp Business Cloud API Integration Guide
             </h3>
             <p className="text-xs text-slate-500 mt-1">
-              Instructions to configure official, legally compliant automated bulk WhatsApp messaging for Anapuruna Catering.
+              Instructions to configure official, legally compliant automated bulk WhatsApp messaging for Annapoorna Catering.
             </p>
           </div>
 
