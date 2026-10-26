@@ -22,16 +22,19 @@ export const Hero: React.FC = () => {
 
   return (
     <section className="relative w-full min-h-[360px] sm:min-h-[420px] md:min-h-[480px] flex items-center justify-center overflow-hidden border-b border-[#DCE8F5]">
-      {/* Background Image */}
+      {/* Background Image: sharp, vibrant, no blur */}
       <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat scale-105"
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url(${heroImg})`,
         }}
       />
 
-      {/* Light Blue & White Premium Overlay */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-white/90 via-[#EFF6FF]/85 to-[#F8FAFC]/95 backdrop-blur-[2px]" />
+      {/* Gentle overlay to preserve vibrant food colors while blending at bottom */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/15 via-transparent to-white/70 pointer-events-none" />
+
+      {/* Radial soft highlight centered behind text for contrast */}
+      <div className="absolute inset-0 z-10 bg-[radial-gradient(ellipse_85%_75%_at_50%_50%,rgba(255,255,255,0.82)_0%,rgba(255,255,255,0.45)_55%,rgba(255,255,255,0.1)_100%)] pointer-events-none" />
 
       {/* Content */}
       <div className="relative z-20 text-center px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center py-12 sm:py-16 md:py-20">
