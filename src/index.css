@@ -1,54 +1,67 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #ea580c;
-  --color-primary-light: #ffedd5;
+  --color-primary: #0966cc;
+  --color-primary-dark: #123b75;
+  --color-primary-light: #eff6ff;
+  --color-navy: #123b75;
+  --color-navy-dark: #0c274e;
+  --color-secondary: #3b82f6;
+  --color-light-blue: #eff6ff;
+  --color-light-border: #dce8f5;
+  --color-body-text: #24364b;
+  --color-muted-text: #64748b;
   --font-sans: "Inter", "system-ui", "sans-serif";
 
-  /* Vibrant Blue-Based Typography & Text Theme */
-  --color-slate-900: #1e3a8a; /* Deep Royal Navy Blue */
-  --color-slate-800: #1e40af; /* Rich Royal Blue */
-  --color-slate-700: #1d4ed8; /* Vibrant Classic Blue */
-  --color-slate-600: #2563eb; /* Accessible Medium Blue */
-  --color-slate-500: #3b82f6; /* Soft Sky Blue */
+  /* Refined Blue & Slate Palette for crisp text */
+  --color-slate-900: #123b75; /* Dark Navy Blue */
+  --color-slate-800: #19488a; /* Deep Navy */
+  --color-slate-700: #24364b; /* Body Text */
+  --color-slate-600: #475569; /* Slate 600 */
+  --color-slate-500: #64748b; /* Muted Text */
 }
 
 :root {
-  --color-text-primary: #1e3a8a; /* Deep rich blue */
-  --color-text-secondary: #1e40af; /* Royal blue */
-  --color-text-muted: #2563eb; /* Medium blue */
-  --color-link: #1d4ed8;
-  --color-brand-orange: #ea580c;
+  --color-primary: #0966cc;
+  --color-primary-dark: #123b75;
+  --color-secondary: #3b82f6;
+  --color-light-bg: #eff6ff;
+  --color-light-border: #dce8f5;
+  --color-body-text: #24364b;
+  --color-muted-text: #64748b;
+  --color-text-primary: #123b75;
+  --color-text-secondary: #24364b;
+  --color-text-muted: #64748b;
+  --color-link: #0966cc;
 }
 
 body {
-  color: var(--color-text-primary);
+  color: #24364b;
+  background-color: #f8fafc;
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Headings default to rich royal blue */
+/* Headings default to rich dark navy blue */
 h1, h2, h3, h4, h5, h6 {
-  color: #1e3a8a;
+  color: #123b75;
 }
 
-/* Ensure website texts have a vibrant, prominent blue tone */
+/* Ensure website texts adhere to the Blue & White design system */
 .text-slate-900 {
-  color: #1e3a8a;
+  color: #123b75;
 }
 .text-slate-800 {
-  color: #1e40af;
+  color: #19488a;
 }
 .text-slate-700 {
-  color: #1d4ed8;
-}
-.text-slate-600 {
-  color: #2563eb;
+  color: #24364b;
 }
 .text-slate-500 {
-  color: #3b82f6;
+  color: #64748b;
 }
 
-/* Hide scrollbar for category nav but allow scrolling */
+/* Hide scrollbar for category nav but allow smooth scrolling */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -56,4 +69,3 @@ h1, h2, h3, h4, h5, h6 {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-

@@ -169,7 +169,7 @@ export const RiceSuggestionModal: React.FC = () => {
           <div className="flex flex-col gap-2">
             <button
               onClick={handleClose}
-              className="w-full bg-[#ea580c] hover:bg-[#d94f0b] text-white py-3 rounded-xl font-semibold text-sm transition-colors shadow-md shadow-orange-500/10 cursor-pointer"
+              className="w-full bg-[#0966CC] hover:bg-[#123B75] text-white py-3 rounded-xl font-semibold text-sm transition-all shadow-md hover:shadow-lg cursor-pointer border border-blue-600/30"
             >
               {t.continue}
             </button>

@@ -24,10 +24,10 @@ function inr(amount: number): string {
 export function generateInvoicePDF(order: Order, invoice: Invoice): void {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-  const primaryColor: [number, number, number] = [234, 88, 12];
-  const darkColor: [number, number, number] = [30, 41, 59];
-  const lightGray: [number, number, number] = [248, 250, 252];
-  const borderGray: [number, number, number] = [226, 232, 240];
+  const primaryColor: [number, number, number] = [9, 102, 204]; // #0966CC Primary Blue
+  const darkColor: [number, number, number] = [36, 54, 75];     // #24364B Body Text
+  const lightGray: [number, number, number] = [239, 246, 255];  // #EFF6FF Light Blue
+  const borderGray: [number, number, number] = [220, 232, 245]; // #DCE8F5 Light Border
 
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -257,5 +257,5 @@ export function generateInvoicePDF(order: Order, invoice: Invoice): void {
   );
 
   // ─── SAVE ───────────────────────────────────────────────
-  doc.save(`Annapoorna-Invoice-${invoice.id}.pdf`);
+  doc.save(`Kanchi-Ambal-Invoice-${invoice.id}.pdf`);
 }

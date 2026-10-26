@@ -323,7 +323,7 @@ export const AdminDishes: React.FC = () => {
           onClick={() => setActiveTab('all')}
           className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
             activeTab === 'all'
-              ? 'border-primary text-primary bg-orange-50/50'
+              ? 'border-primary text-primary bg-blue-50/70'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -337,12 +337,12 @@ export const AdminDishes: React.FC = () => {
           onClick={() => setActiveTab('admin')}
           className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
             activeTab === 'admin'
-              ? 'border-primary text-primary bg-orange-50/50'
+              ? 'border-primary text-primary bg-blue-50/70'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
           <span>{isTa ? 'நிர்வாகியால் சேர்க்கப்பட்டவை' : 'Admin Custom'}</span>
-          <span className="text-[11px] px-2 py-0.5 rounded-full bg-orange-100 text-primary font-bold">
+          <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-100 text-primary font-bold">
             {adminCount}
           </span>
         </button>
@@ -351,7 +351,7 @@ export const AdminDishes: React.FC = () => {
           onClick={() => setActiveTab('deactivated')}
           className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
             activeTab === 'deactivated'
-              ? 'border-primary text-primary bg-orange-50/50'
+              ? 'border-primary text-primary bg-blue-50/70'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -365,7 +365,7 @@ export const AdminDishes: React.FC = () => {
           onClick={() => setActiveTab('units')}
           className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
             activeTab === 'units'
-              ? 'border-primary text-primary bg-orange-50/50'
+              ? 'border-primary text-primary bg-blue-50/70'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -466,7 +466,7 @@ export const AdminDishes: React.FC = () => {
                           {dish.defaultUnit}
                         </span>
                         {dish.isAdminAdded ? (
-                          <span className="bg-orange-600/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
+                          <span className="bg-primary/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">
                             {isTa ? 'நிர்வாக உணவு' : 'Custom'}
                           </span>
                         ) : (
@@ -533,7 +533,7 @@ export const AdminDishes: React.FC = () => {
                           <button
                             onClick={() => openEdit(dish)}
                             title={isTa ? 'உணவைத் திருத்த' : 'Edit dish'}
-                            className="p-1.5 text-slate-600 hover:text-primary hover:bg-orange-50 rounded-lg cursor-pointer transition-colors flex items-center gap-1"
+                            className="p-1.5 text-slate-600 hover:text-primary hover:bg-blue-50 rounded-lg cursor-pointer transition-colors flex items-center gap-1"
                           >
                             <Pencil size={15} />
                             <span className="text-[11px] font-medium">{isTa ? 'திருத்து' : 'Edit'}</span>
@@ -609,7 +609,7 @@ export const AdminDishes: React.FC = () => {
                       </td>
                       <td className="px-4 py-3 text-slate-600 text-xs">{dish.categoryName}</td>
                       <td className="px-4 py-3">
-                        <span className="font-bold text-xs bg-orange-50 text-orange-900 border border-orange-200 px-2.5 py-1 rounded-md">
+                        <span className="font-bold text-xs bg-blue-50 text-blue-900 border border-blue-200 px-2.5 py-1 rounded-md">
                           {dish.defaultUnit}
                         </span>
                       </td>
@@ -642,7 +642,7 @@ export const AdminDishes: React.FC = () => {
             {/* Modal Header */}
             <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-orange-100 text-primary flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 text-primary flex items-center justify-center">
                   {editingDish ? <Pencil size={16} /> : <Plus size={18} />}
                 </div>
                 <div>
@@ -765,7 +765,7 @@ export const AdminDishes: React.FC = () => {
                 ) : (
                   <div
                     onClick={() => fileRef.current?.click()}
-                    className="border-2 border-dashed border-slate-300 hover:border-primary rounded-xl p-6 text-center cursor-pointer bg-slate-50 hover:bg-orange-50/20 transition-colors"
+                    className="border-2 border-dashed border-slate-300 hover:border-primary rounded-xl p-6 text-center cursor-pointer bg-slate-50 hover:bg-blue-50/30 transition-colors"
                   >
                     <UploadCloud size={32} className="mx-auto text-slate-400 mb-2" />
                     <p className="text-xs font-semibold text-slate-700">

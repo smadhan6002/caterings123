@@ -3,9 +3,10 @@ import { siteConfig } from '../config/site';
 import { useLanguage } from '../context/LanguageContext';
 import { generateMenuPDF } from '../utils/generateMenuPDF';
 import heroImg from '../assets/Home section.jpg';
+import { Download, Utensils } from 'lucide-react';
 
 export const Hero: React.FC = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [downloading, setDownloading] = useState(false);
 
   async function handleDownloadMenu() {
@@ -18,28 +19,35 @@ export const Hero: React.FC = () => {
       setDownloading(false);
     }
   }
+
   return (
-    <div className="relative w-full h-[350px] md:h-[450px] lg:h-[550px] xl:h-[600px] flex items-center justify-center overflow-hidden">
+    <section className="relative w-full min-h-[360px] sm:min-h-[420px] md:min-h-[480px] flex items-center justify-center overflow-hidden border-b border-[#DCE8F5]">
       {/* Background Image */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+      <div
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat scale-105"
         style={{
           backgroundImage: `url(${heroImg})`,
         }}
       />
-      {/* Gradient Overlay for blending background smoothly at the bottom */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-white/10 via-white/40 to-slate-50" />
+
+      {/* Light Blue & White Premium Overlay */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-white/90 via-[#EFF6FF]/85 to-[#F8FAFC]/95 backdrop-blur-[2px]" />
 
       {/* Content */}
-      <div className="relative z-20 text-center px-4 max-w-3xl mx-auto flex flex-col items-center mt-12 md:mt-24">
-        <div className="flex items-center gap-2 text-primary font-medium text-sm tracking-wider uppercase mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
-          {t.welcome}
+      <div className="relative z-20 text-center px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center py-12 sm:py-16 md:py-20">
+        {/* Welcome Tagline */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/90 border border-[#DCE8F5] text-[#0966CC] font-semibold text-xs sm:text-sm tracking-wide shadow-2xs mb-4">
+          <Utensils className="w-3.5 h-3.5 text-[#0966CC]" />
+          <span>{t.welcome}</span>
         </div>
-        <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-blue-950 mb-4 tracking-tight px-4 w-full">
+
+        {/* Brand Heading */}
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-[#123B75] mb-3 sm:mb-4 tracking-tight leading-tight">
           {siteConfig.name}
         </h1>
-        <p className="text-blue-900 text-lg md:text-xl mb-5 font-medium">
+
+        {/* Catering Description */}
+        <p className="text-[#24364B] text-sm sm:text-lg md:text-xl max-w-2xl mx-auto mb-6 sm:mb-8 font-medium leading-relaxed">
           {t.heroDescription}
         </p>
 
@@ -47,22 +55,21 @@ export const Hero: React.FC = () => {
         <button
           onClick={handleDownloadMenu}
           disabled={downloading}
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/95 hover:bg-white text-blue-900 text-xs sm:text-sm font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-150 backdrop-blur-sm border border-blue-200/80 cursor-pointer disabled:opacity-60"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#0966CC] hover:bg-[#123B75] text-white text-xs sm:text-sm font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer disabled:opacity-60 border border-blue-600/30"
         >
           {downloading ? (
             <>
-              <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <span>{t.lang === 'ta' ? 'பதிவிறக்கம் செய்யப்படுகிறது...' : 'Generating Menu PDF...'}</span>
+              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>{lang === 'ta' ? 'மெனு PDF உருவாக்கப்படுகிறது...' : 'Generating Menu PDF...'}</span>
             </>
           ) : (
             <>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-              <span>{t.lang === 'ta' ? 'உணவு மெனு PDF பதிவிறக்கு' : 'Download Food Menu PDF'}</span>
+              <Download className="w-4 h-4 text-white" />
+              <span>{lang === 'ta' ? 'உணவு மெனு PDF பதிவிறக்கு' : 'Download Food Menu PDF'}</span>
             </>
           )}
         </button>
       </div>
-    </div>
+    </section>
   );
 };
-

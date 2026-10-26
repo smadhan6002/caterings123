@@ -103,7 +103,7 @@ export const AdminKitchenSheet: React.FC<AdminKitchenSheetProps> = ({ initialOrd
             <h2 className="text-xl font-bold text-slate-900">
               {isTa ? 'சமையல் குறிப்பு தாள்கள் (Kitchen Order Sheets)' : 'Kitchen Order Sheets'}
             </h2>
-            <span className="bg-orange-100 text-primary text-xs font-bold px-2.5 py-0.5 rounded-full border border-orange-200">
+            <span className="bg-blue-100 text-primary text-xs font-bold px-2.5 py-0.5 rounded-full border border-blue-200">
               {totalSheets} {isTa ? 'ஆர்டர்கள்' : 'Orders'}
             </span>
           </div>
@@ -340,7 +340,7 @@ export const AdminKitchenSheet: React.FC<AdminKitchenSheetProps> = ({ initialOrd
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => setSelectedOrder(order)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 text-primary border border-orange-200/80 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-primary border border-blue-200/80 rounded-xl text-xs font-bold transition-all cursor-pointer"
                               title="Open & Edit Kitchen Sheet"
                             >
                               <ChefHat size={14} />
@@ -379,7 +379,7 @@ export const AdminKitchenSheet: React.FC<AdminKitchenSheetProps> = ({ initialOrd
                   className="bg-white rounded-2xl shadow-xs border border-slate-200 p-4 space-y-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-primary bg-orange-50 px-2 py-0.5 rounded-lg border border-orange-200">
+                    <span className="font-mono text-xs font-bold text-primary bg-blue-50 px-2 py-0.5 rounded-lg border border-blue-200">
                       {order.id}
                     </span>
                     <span

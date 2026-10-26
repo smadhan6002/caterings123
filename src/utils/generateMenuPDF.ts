@@ -183,11 +183,11 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
     // Header Band
     if (pageIdx === 0) {
       // Luxurious Top Header for Page 1
-      ctx.fillStyle = '#EA580C';
+      ctx.fillStyle = '#0966CC';
       ctx.fillRect(45, y, PAGE_WIDTH - 90, 160);
 
-      // Gold accent line
-      ctx.fillStyle = '#F59E0B';
+      // Accent line
+      ctx.fillStyle = '#3B82F6';
       ctx.fillRect(45, y + 156, PAGE_WIDTH - 90, 4);
 
       // Logo
@@ -208,8 +208,8 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
       ctx.fillText(siteConfig.name, 200, y + 60);
 
       ctx.font = 'bold 20px "Noto Sans Tamil", "Latha", sans-serif';
-      ctx.fillStyle = '#FEF3C7';
-      ctx.fillText('அன்னபூர்ணா பாரம்பரிய கேட்டரிங் மெனு பட்டியல்', 200, y + 92);
+      ctx.fillStyle = '#EFF6FF';
+      ctx.fillText('காஞ்சி அம்பாள் பாரம்பரிய கேட்டரிங் மெனு பட்டியல்', 200, y + 92);
 
       ctx.font = '16px "Inter", "Segoe UI", sans-serif';
       ctx.fillStyle = '#FFFFFF';
@@ -218,20 +218,20 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
       y += 185;
 
       // Menu Title Banner
-      ctx.fillStyle = '#FFF7ED';
+      ctx.fillStyle = '#EFF6FF';
       ctx.fillRect(45, y, PAGE_WIDTH - 90, 48);
-      ctx.strokeStyle = '#FDBA74';
+      ctx.strokeStyle = '#DCE8F5';
       ctx.lineWidth = 1;
       ctx.strokeRect(45, y, PAGE_WIDTH - 90, 48);
 
-      ctx.fillStyle = '#9A3412';
+      ctx.fillStyle = '#123B75';
       ctx.font = 'bold 18px "Inter", "Segoe UI", sans-serif';
       ctx.fillText('★ PURE VEGETARIAN CATERING SERVICES  |  FOOD MENU SELECTIONS ★', PAGE_WIDTH / 2 - 290, y + 30);
 
       y += 70;
     } else {
       // Compact Header for Subsequent Pages
-      ctx.fillStyle = '#EA580C';
+      ctx.fillStyle = '#0966CC';
       ctx.fillRect(45, y, PAGE_WIDTH - 90, 60);
 
       ctx.fillStyle = '#FFFFFF';
@@ -239,7 +239,7 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
       ctx.fillText(siteConfig.name, 65, y + 40);
 
       ctx.font = '16px "Inter", "Segoe UI", sans-serif';
-      ctx.fillStyle = '#FEF3C7';
+      ctx.fillStyle = '#EFF6FF';
       ctx.fillText(`Ph: +91 ${siteConfig.whatsappNumber}`, PAGE_WIDTH - 250, y + 40);
 
       y += 85;
@@ -253,7 +253,7 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
       ctx.fillStyle = '#F8FAFC';
       ctx.fillRect(45, y, PAGE_WIDTH - 90, 36);
 
-      ctx.fillStyle = '#EA580C';
+      ctx.fillStyle = '#0966CC';
       ctx.fillRect(45, y, 6, 36);
 
       ctx.fillStyle = '#0F172A';
@@ -261,7 +261,7 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
       ctx.fillText(cat.name, 62, y + 24);
 
       ctx.font = 'bold 16px "Noto Sans Tamil", "Latha", sans-serif';
-      ctx.fillStyle = '#EA580C';
+      ctx.fillStyle = '#0966CC';
       ctx.fillText(`(${cat.nameTa})`, 62 + ctx.measureText(cat.name).width + 12, y + 24);
 
       y += 48;
@@ -301,7 +301,7 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
           ctx.drawImage(dishImg, colX + 6, itemY + 5, 24, 24);
           ctx.restore();
         } else {
-          ctx.fillStyle = '#EA580C';
+          ctx.fillStyle = '#0966CC';
           ctx.beginPath();
           ctx.arc(colX + 18, itemY + 17, 4, 0, Math.PI * 2);
           ctx.fill();
@@ -321,9 +321,9 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
 
         // Unit badge
         if (dish.defaultUnit) {
-          ctx.fillStyle = '#FED7AA';
+          ctx.fillStyle = '#EFF6FF';
           ctx.fillRect(colX + colWidth - 80, itemY + 8, 70, 18);
-          ctx.fillStyle = '#9A3412';
+          ctx.fillStyle = '#123B75';
           ctx.font = 'bold 10px "Inter", "Segoe UI", sans-serif';
           ctx.fillText(dish.defaultUnit, colX + colWidth - 72, itemY + 21);
         }
@@ -346,7 +346,7 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
     );
 
     ctx.font = 'bold 12px "Inter", "Segoe UI", sans-serif';
-    ctx.fillStyle = '#EA580C';
+    ctx.fillStyle = '#0966CC';
     ctx.fillText(`Page ${pageIdx + 1} of ${totalPages}`, PAGE_WIDTH - 140, footerY + 22);
 
     // Convert canvas to image data and add to jsPDF
@@ -358,6 +358,6 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
   }
 
   onProgress?.(98, 'Finalizing download…');
-  doc.save('Annapoorna_Catering_Food_Menu.pdf');
+  doc.save('Kanchi_Ambal_Catering_Food_Menu.pdf');
   onProgress?.(100, 'Complete!');
 }

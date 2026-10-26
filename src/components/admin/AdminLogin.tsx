@@ -31,15 +31,15 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-slate-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#EFF6FF] via-white to-slate-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo / Branding */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl shadow-lg mb-4">
             <ChefHat size={32} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">{siteConfig.name}</h1>
-          <p className="text-slate-500 text-sm mt-1">Admin Portal</p>
+          <h1 className="text-2xl font-bold text-[#123B75]">{siteConfig.name}</h1>
+          <p className="text-slate-500 text-sm mt-1">{siteConfig.tamilName} • Admin Portal</p>
         </div>
 
         {/* Card */}

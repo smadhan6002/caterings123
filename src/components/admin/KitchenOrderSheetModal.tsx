@@ -225,7 +225,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 sm:px-6 py-4 bg-slate-50 border-b border-slate-200">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-orange-100 text-primary flex items-center justify-center flex-shrink-0 shadow-xs border border-orange-200">
+              <div className="w-10 h-10 rounded-2xl bg-blue-100 text-primary flex items-center justify-center flex-shrink-0 shadow-xs border border-blue-200">
                 <ChefHat size={22} />
               </div>
               <div>
@@ -233,7 +233,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
                   <h3 className="font-bold text-slate-900 text-base sm:text-lg">
                     {isTa ? 'சமையல் தயாரிப்பு பட்டியல்' : 'Kitchen Order Sheet'}
                   </h3>
-                  <span className="font-mono text-xs font-bold text-primary bg-orange-50 border border-orange-200/80 px-2.5 py-0.5 rounded-lg">
+                  <span className="font-mono text-xs font-bold text-primary bg-blue-50 border border-blue-200/80 px-2.5 py-0.5 rounded-lg">
                     {sheet.orderId}
                   </span>
                   <span
@@ -354,7 +354,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
                 type="button"
                 onClick={handleDownloadPDF}
                 disabled={downloading}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary hover:bg-[#123B75] text-white rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
               >
                 <Download size={14} />
                 <span>{downloading ? (isTa ? 'பதிவிறக்குகிறது…' : 'Downloading…') : (isTa ? 'PDF பதிவிறக்கு' : 'Download PDF')}</span>
@@ -656,7 +656,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-xl">
+                      <div className="bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl">
                         <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-bold">
                           Order ID
                         </span>
@@ -708,7 +708,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
                           <th className="py-2.5 px-3 text-center w-10">#</th>
                           <th className="py-2.5 px-4 text-left">Food Item / Dish Name</th>
                           <th className="py-2.5 px-3 text-center w-28">Customer Qty</th>
-                          <th className="py-2.5 px-3 text-center w-28 bg-orange-700">Final Prep Qty</th>
+                          <th className="py-2.5 px-3 text-center w-28 bg-[#123B75]">Final Prep Qty</th>
                           <th className="py-2.5 px-3 text-center w-24">Unit</th>
                           <th className="py-2.5 px-4 text-left">Kitchen Notes</th>
                         </tr>
@@ -732,7 +732,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
                               <td className="py-2.5 px-3 text-center font-bold text-slate-400">{i + 1}</td>
                               <td className="py-2.5 px-4 font-bold text-slate-900">{displayName}</td>
                               <td className="py-2.5 px-3 text-center text-slate-500">{custQtyStr}</td>
-                              <td className="py-2.5 px-3 text-center font-extrabold text-primary text-sm bg-orange-50/60">
+                              <td className="py-2.5 px-3 text-center font-extrabold text-primary text-sm bg-blue-50/60">
                                 {item.prepQuantity || '—'}
                               </td>
                               <td className="py-2.5 px-3 text-center font-semibold text-slate-700">

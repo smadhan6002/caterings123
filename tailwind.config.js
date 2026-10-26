@@ -8,9 +8,19 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#ea580c', // orange-600
-          light: '#ffedd5', // orange-100
+          DEFAULT: '#0966CC',
+          dark: '#123B75',
+          light: '#EFF6FF',
         },
+        navy: {
+          DEFAULT: '#123B75',
+          dark: '#0c274e',
+        },
+        secondary: '#3B82F6',
+        lightBlue: '#EFF6FF',
+        lightBorder: '#DCE8F5',
+        bodyText: '#24364B',
+        mutedText: '#64748B',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

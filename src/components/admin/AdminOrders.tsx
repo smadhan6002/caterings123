@@ -319,7 +319,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order: initialOrder, onClose,
               <button
                 onClick={handleDownloadInvoice}
                 disabled={downloadingInvoice}
-                className="px-3 py-1.5 text-xs font-semibold text-primary bg-orange-50 hover:bg-orange-100 border border-orange-200/60 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                className="px-3 py-1.5 text-xs font-semibold text-primary bg-blue-50 hover:bg-blue-100 border border-blue-200/60 rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
               >
                 <Download size={14} />
                 <span>{downloadingInvoice ? 'Generating…' : 'Invoice PDF'}</span>
@@ -450,7 +450,7 @@ const OrderDetail: React.FC<OrderDetailProps> = ({ order: initialOrder, onClose,
                       </div>
 
                       {qty !== undefined && qty !== null && (
-                        <span className="font-bold text-slate-900 bg-orange-50 text-orange-950 px-2.5 py-1 rounded-lg text-xs border border-orange-200/60 whitespace-nowrap">
+                        <span className="font-bold text-slate-900 bg-blue-50 text-blue-950 px-2.5 py-1 rounded-lg text-xs border border-blue-200/60 whitespace-nowrap">
                           {qty} {unit || 'Units'}
                         </span>
                       )}
@@ -1048,7 +1048,7 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ onOpenKitchenSheet: _o
                             </button>
                             <button
                               onClick={() => setSelectedOrder(order)}
-                              className="p-1.5 text-slate-500 hover:text-primary hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
+                              className="p-1.5 text-slate-500 hover:text-primary hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                               title="View Details"
                             >
                               <Eye size={16} />
@@ -1136,7 +1136,7 @@ export const AdminOrders: React.FC<AdminOrdersProps> = ({ onOpenKitchenSheet: _o
                         </button>
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="flex-1 flex items-center justify-center gap-1.5 bg-orange-50 text-primary py-2 rounded-xl text-xs font-semibold cursor-pointer"
+                          className="flex-1 flex items-center justify-center gap-1.5 bg-blue-50 text-primary py-2 rounded-xl text-xs font-semibold cursor-pointer"
                         >
                           <Eye size={14} /> Details
                         </button>

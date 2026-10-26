@@ -54,7 +54,7 @@ export const FoodQuantitySelector: React.FC = () => {
 
   return (
     <section className="space-y-3">
-      <h3 className="text-sm font-semibold text-blue-900">{t.foodQuantityTitle}</h3>
+      <h3 className="text-sm font-semibold text-[#123B75]">{t.foodQuantityTitle}</h3>
       
       <div className="space-y-2">
         {cartItems.map((item) => {
@@ -65,8 +65,8 @@ export const FoodQuantitySelector: React.FC = () => {
           // State 1: Editing / Adding Mode
           if (isEditing) {
             return (
-              <div key={item.id} className="border border-primary/30 rounded-xl p-3 bg-orange-50/50 space-y-2">
-                <p className="text-sm font-semibold text-blue-900">{displayNm}</p>
+              <div key={item.id} className="border border-[#0966CC]/30 rounded-xl p-3 bg-[#EFF6FF] space-y-2">
+                <p className="text-sm font-semibold text-[#123B75]">{displayNm}</p>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -74,15 +74,15 @@ export const FoodQuantitySelector: React.FC = () => {
                     step="0.001"
                     value={quantityInput}
                     onChange={(e) => { setQuantityInput(e.target.value); setError(''); }}
-                    className="w-24 px-2 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 bg-white"
+                    className="w-24 px-2.5 py-1.5 border border-[#DCE8F5] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0966CC]/30 bg-white"
                     placeholder={t.enterQuantityKg}
                     autoFocus
                   />
-                  <span className="text-sm text-blue-800 self-center whitespace-nowrap">{t.kgUnit}</span>
+                  <span className="text-sm text-[#123B75] self-center whitespace-nowrap font-medium">{t.kgUnit}</span>
                   <div className="flex gap-1 ml-auto">
                     <button
                       onClick={() => fq ? handleSaveEdit(item.id) : handleAdd(item.id, item.name)}
-                      className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer flex items-center gap-1"
+                      className="px-3 py-1.5 bg-[#0966CC] hover:bg-[#123B75] text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1 shadow-2xs"
                     >
                       {fq ? <Check size={14} /> : t.addQuantity}
                     </button>
@@ -94,7 +94,7 @@ export const FoodQuantitySelector: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                {error && <p className="text-red-500 text-xs">{error}</p>}
+                {error && <p className="text-red-500 text-xs font-medium">{error}</p>}
               </div>
             );
           }
@@ -102,16 +102,16 @@ export const FoodQuantitySelector: React.FC = () => {
           // State 2: Has Quantity
           if (fq) {
             return (
-              <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 bg-blue-50/40 rounded-xl border border-blue-100">
+              <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 bg-[#EFF6FF] rounded-xl border border-[#DCE8F5]">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-blue-900 truncate">{displayNm}</p>
-                  <p className="text-xs text-blue-700/80 font-medium">{fq.quantity} {t.kgUnit}</p>
+                  <p className="text-sm font-semibold text-[#123B75] truncate">{displayNm}</p>
+                  <p className="text-xs text-[#0966CC] font-bold">{fq.quantity} {t.kgUnit}</p>
                 </div>
                 <div className="flex gap-1">
                   <button
                     onClick={() => startEdit(fq)}
                     aria-label={`Edit ${displayNm}`}
-                    className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-100/50 rounded-lg transition-colors cursor-pointer"
+                    className="p-1.5 text-[#0966CC] hover:text-[#123B75] hover:bg-blue-100 rounded-lg transition-colors cursor-pointer"
                   >
                     <Pencil size={13} />
                   </button>
@@ -129,11 +129,11 @@ export const FoodQuantitySelector: React.FC = () => {
 
           // State 3: No Quantity, show "Add Quantity" button
           return (
-            <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 border border-dashed border-blue-200 rounded-xl hover:border-blue-300 transition-colors">
-              <p className="text-sm font-medium text-blue-900 truncate flex-1">{displayNm}</p>
+            <div key={item.id} className="flex items-center justify-between gap-2 py-2 px-3 border border-dashed border-[#DCE8F5] rounded-xl hover:border-[#3B82F6] transition-colors">
+              <p className="text-sm font-medium text-[#123B75] truncate flex-1">{displayNm}</p>
               <button
                 onClick={() => startAdd(item.id)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary hover:bg-orange-50 transition-colors cursor-pointer whitespace-nowrap"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#0966CC] hover:bg-[#EFF6FF] transition-colors cursor-pointer whitespace-nowrap"
               >
                 <Plus size={14} />
                 {t.addFoodQuantity}
@@ -145,4 +145,3 @@ export const FoodQuantitySelector: React.FC = () => {
     </section>
   );
 };
-

@@ -28,9 +28,18 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ category }) => {
   }
 
   return (
-    <section id={`category-${category.id}`} className="py-8 scroll-mt-24">
-      <h2 className="text-2xl font-bold text-blue-950 mb-6">{categoryName(category.id, category.name)}</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <section id={`category-${category.id}`} className="py-6 sm:py-8 scroll-mt-28 sm:scroll-mt-32">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-[#123B75] tracking-tight">
+          {categoryName(category.id, category.name)}
+        </h2>
+        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#0966CC] border border-[#DCE8F5]">
+          {dishes.length}
+        </span>
+      </div>
+
+      {/* Responsive Grid: 1 col on <340px, 2 cols on mobile (340px-639px), 3 cols on tablet, 4 cols on desktop */}
+      <div className="grid grid-cols-1 min-[340px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
         {dishes.map((item) => (
           <MenuItemCard key={item.id} item={item} />
         ))}

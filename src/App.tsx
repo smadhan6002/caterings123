@@ -4,6 +4,7 @@ import { User, ChevronDown, Check } from 'lucide-react';
 import { categories } from './data/menu';
 import { CartProvider } from './context/CartContext';
 import { LanguageProvider, useLanguage, type Language } from './context/LanguageContext';
+import { siteConfig } from './config/site';
 import { Hero } from './components/Hero';
 import { CategoryNav } from './components/CategoryNav';
 import { MenuSection } from './components/MenuSection';
@@ -35,42 +36,45 @@ function LanguageSwitcher() {
     { value: 'ta', label: 'Tamil', native: 'தமிழ்' },
   ];
 
-  const current = options.find(o => o.value === lang) ?? options[0];
+  const current = options.find((o) => o.value === lang) ?? options[0];
 
   return (
     <div ref={ref} className="relative" id="language-switcher">
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Language: ${current.native}`}
-        className="bg-white/90 hover:bg-white text-slate-800 text-xs sm:text-sm font-medium px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center gap-1 cursor-pointer backdrop-blur-sm border border-slate-200/70"
+        className="bg-[#EFF6FF] hover:bg-blue-100/70 text-[#123B75] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#DCE8F5] transition-all duration-150 flex items-center gap-1 sm:gap-1.5 cursor-pointer shadow-2xs"
       >
-        <span className="text-sm leading-none">{lang === 'ta' ? '🇮🇳' : '🌐'}</span>
-        <span className="hidden xs:inline">{current.native}</span>
-        <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <span className="text-xs sm:text-sm leading-none">{lang === 'ta' ? '🇮🇳' : '🌐'}</span>
+        <span className="hidden min-[380px]:inline text-xs sm:text-sm">{current.native}</span>
+        <ChevronDown className={`w-3 h-3 text-[#0966CC] transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
         <div
           role="listbox"
           aria-label="Select language"
-          className="absolute top-full right-0 mt-2 z-50 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden min-w-[130px]"
+          className="absolute top-full right-0 mt-2 z-50 bg-white rounded-xl shadow-xl border border-[#DCE8F5] overflow-hidden min-w-[130px]"
         >
-          {options.map(opt => (
+          {options.map((opt) => (
             <button
               key={opt.value}
               role="option"
               aria-selected={lang === opt.value}
-              onClick={() => { setLang(opt.value); setOpen(false); }}
-              className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 text-sm transition-colors cursor-pointer
-                ${lang === opt.value
-                  ? 'bg-orange-50 text-primary font-semibold'
-                  : 'text-slate-700 hover:bg-slate-50'
-                }`}
+              onClick={() => {
+                setLang(opt.value);
+                setOpen(false);
+              }}
+              className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 text-xs sm:text-sm transition-colors cursor-pointer ${
+                lang === opt.value
+                  ? 'bg-[#EFF6FF] text-[#0966CC] font-bold'
+                  : 'text-[#24364B] hover:bg-slate-50'
+              }`}
             >
               <span>{opt.native}</span>
-              {lang === opt.value && <Check className="w-3.5 h-3.5 text-primary" />}
+              {lang === opt.value && <Check className="w-3.5 h-3.5 text-[#0966CC]" />}
             </button>
           ))}
         </div>
@@ -85,22 +89,23 @@ function AdminLoginButton() {
   return (
     <button
       onClick={() => navigate('/admin')}
-      className="bg-slate-900/90 hover:bg-slate-800 text-white text-xs sm:text-sm font-medium px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-150 flex items-center gap-1.5 cursor-pointer backdrop-blur-sm border border-slate-700/50"
+      className="bg-[#0966CC] hover:bg-[#123B75] text-white text-xs sm:text-sm font-semibold px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl shadow-xs hover:shadow-md transition-all duration-150 flex items-center gap-1.5 cursor-pointer border border-blue-600/30"
       aria-label="Admin login"
     >
-      <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-300" />
+      <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-100" />
       <span>{t.admin}</span>
     </button>
   );
 }
 
 function MainApp() {
+  const { lang } = useLanguage();
   const [activeCategory, setActiveCategory] = React.useState(categories[0].id);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries.find(entry => entry.isIntersecting);
+        const visible = entries.find((entry) => entry.isIntersecting);
         if (visible) {
           const id = visible.target.id.replace('category-', '');
           setActiveCategory(id);
@@ -109,7 +114,7 @@ function MainApp() {
       { rootMargin: '-20% 0px -70% 0px' }
     );
 
-    categories.forEach(cat => {
+    categories.forEach((cat) => {
       const el = document.getElementById(`category-${cat.id}`);
       if (el) observer.observe(el);
     });
@@ -118,39 +123,57 @@ function MainApp() {
   }, []);
 
   return (
-    <div className="min-h-screen pb-24">
-      {/* Navbar Container */}
-      <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none p-3 sm:p-4 flex items-start justify-between">
-        {/* Logo */}
-        <div className="pointer-events-auto">
-          <a href="/" className="block group" aria-label="Annapoorna Catering Home">
-            <img 
-              src={logoImg} 
-              alt="Annapoorna Catering Logo" 
-              className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 object-contain rounded-full shadow-lg border-2 border-white/90 bg-white/95 p-1 transition-transform group-hover:scale-105 duration-200" 
+    <div className="min-h-screen bg-[#F8FAFC] pb-24">
+      {/* Header — White with Blue Branding */}
+      <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#DCE8F5] shadow-2xs">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 md:h-18 flex items-center justify-between gap-2">
+          {/* Logo & Business Name */}
+          <a
+            href="/"
+            className="flex items-center gap-2 sm:gap-3 group min-w-0"
+            aria-label="Kanchi Ambal Catering Home"
+          >
+            <img
+              src={logoImg}
+              alt="Kanchi Ambal Catering Logo"
+              className="h-9 w-9 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain rounded-full border border-[#DCE8F5] bg-white p-0.5 shadow-2xs transition-transform group-hover:scale-105 duration-200 flex-shrink-0"
             />
+            <div className="min-w-0">
+              <span className="block font-bold text-sm sm:text-base md:text-xl text-[#123B75] tracking-tight truncate group-hover:text-[#0966CC] transition-colors">
+                {siteConfig.name}
+              </span>
+              <span className="hidden sm:block text-[10px] md:text-xs font-medium text-[#64748B] -mt-0.5 truncate">
+                {lang === 'ta' ? 'பாரம்பரிய கேட்டரிங் சேவைகள்' : 'Authentic Traditional Feast Catering'}
+              </span>
+            </div>
           </a>
+
+          {/* Controls: Language & Admin */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 flex-shrink-0">
+            <LanguageSwitcher />
+            <AdminLoginButton />
+          </div>
         </div>
-        
-        {/* Actions */}
-        <div className="pointer-events-auto flex items-center gap-2 sm:gap-3">
-          <LanguageSwitcher />
-          <AdminLoginButton />
-        </div>
-      </div>
-      
+      </header>
+
+      {/* Hero Section */}
       <Hero />
+
+      {/* Sticky Category Navigation */}
       <CategoryNav categories={categories} activeCategory={activeCategory} />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+      {/* Menu Section Grid */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <FoodImageDisclaimer />
         {categories.map((category) => (
           <MenuSection key={category.id} category={category} />
         ))}
       </main>
 
+      {/* Footer */}
       <Footer />
 
+      {/* Cart & Drawer */}
       <CartActionBar />
       <CartDrawer />
       <RiceSuggestionModal />
@@ -173,4 +196,3 @@ export default function App() {
     </BrowserRouter>
   );
 }
-

@@ -163,7 +163,7 @@ export const en = {
   dishTranslationsByEnglishName: {} as Record<string, string>,
 
   // WhatsApp Message strings
-  waHeader: 'ANNAPOORNA CATERING\nNEW CATERING ORDER\n\n',
+  waHeader: 'KANCHI AMBAL CATERING\nNEW CATERING ORDER\n\n',
   waOrderId: 'Order ID',
   waCustomerDetails: 'CUSTOMER DETAILS',
   waCustomerName: 'Customer Name',
@@ -177,7 +177,7 @@ export const en = {
   waNoneKg: 'None specified.',
   waAdditionalReq: 'ADDITIONAL REQUIREMENTS',
   waNone: 'None',
-  waFooter: 'Please contact the customer to confirm the catering requirements.\n\nThank you.\nAnnapoorna Catering',
+  waFooter: 'Please contact the customer to confirm the catering requirements.\n\nThank you.\nKanchi Ambal Catering',
   waKgUnit: 'kg',
 
   // Footer

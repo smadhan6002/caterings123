@@ -345,7 +345,7 @@ export const RentalDocumentModal: React.FC<RentalDocumentModalProps> = ({
         {/* Modal Header */}
         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-200 bg-slate-50/50 rounded-t-2xl">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-orange-100 text-primary flex items-center justify-center">
+            <div className="w-9 h-9 rounded-xl bg-blue-100 text-primary flex items-center justify-center">
               <Package size={20} />
             </div>
             <div>
@@ -366,7 +366,7 @@ export const RentalDocumentModal: React.FC<RentalDocumentModalProps> = ({
               type="button"
               onClick={() => handleInstantDownload('ta')}
               disabled={downloadingLang !== null}
-              className="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-100 text-primary rounded-lg text-xs font-semibold flex items-center gap-1 border border-orange-200 cursor-pointer transition-colors"
+              className="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-primary rounded-lg text-xs font-semibold flex items-center gap-1 border border-blue-200 cursor-pointer transition-colors"
               title="Download Tamil PDF"
             >
               <FileDown size={14} />
@@ -541,7 +541,7 @@ export const RentalDocumentModal: React.FC<RentalDocumentModalProps> = ({
               <h4 className="font-bold text-slate-900 text-xs sm:text-sm uppercase tracking-wider flex items-center gap-2">
                 <Package size={15} className="text-primary" />
                 <span>{isTa ? 'வாடகைப் பொருட்கள் பட்டியல்' : 'Rented Items Table'}</span>
-                <span className="text-xs bg-orange-100 text-primary px-2 py-0.5 rounded-full font-bold">
+                <span className="text-xs bg-blue-100 text-primary px-2 py-0.5 rounded-full font-bold">
                   {items.length} {isTa ? 'வகைகள்' : 'items'} ({totalQuantity} {isTa ? 'எண்ணிக்கை' : 'units'})
                 </span>
               </h4>

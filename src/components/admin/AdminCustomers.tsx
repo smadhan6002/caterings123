@@ -238,7 +238,7 @@ export const AdminCustomers: React.FC = () => {
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-blue-100 text-primary flex items-center justify-center flex-shrink-0">
             <Users size={22} />
           </div>
           <div>
@@ -397,7 +397,7 @@ export const AdminCustomers: React.FC = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => openEditModal(customer)}
-                            className="p-1.5 text-slate-500 hover:text-primary hover:bg-orange-50 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 text-slate-500 hover:text-primary hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
                             title="Edit Customer"
                           >
                             <Pencil size={15} />

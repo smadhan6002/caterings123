@@ -1,7 +1,7 @@
 /**
  * generateRentalPDF — Generates professional downloadable rental invoices / agreements
  * Supports both English ('en') and Tamil ('ta') with complete native Unicode typography.
- * Filename format: Annapoorna-Rental-[RentalNo]-[EN|TA].pdf
+ * Filename format: Kanchi-Ambal-Rental-[RentalNo]-[EN|TA].pdf
  */
 import jsPDF from 'jspdf';
 import type { RentalDocument } from '../types/rental';
@@ -111,19 +111,19 @@ export async function generateRentalPDF(
     termsTitle: isTa ? 'வாடகை நிபந்தனைகள் (Terms & Conditions):' : 'RENTAL TERMS & CONDITIONS:',
     terms: isTa
       ? [
-          '1. அனைத்து வாடகை பாத்திரங்களும் அன்னபூர்ணா கேட்டரிங் நிறுவனத்திற்கு உரியவை. சுத்தமாகவும் சேதமின்றியும் ஒப்படைக்க வேண்டும்.',
+          '1. அனைத்து வாடகை பாத்திரங்களும் காஞ்சி அம்பாள் கேட்டரிங் நிறுவனத்திற்கு உரியவை. சுத்தமாகவும் சேதமின்றியும் ஒப்படைக்க வேண்டும்.',
           '2. பொருட்கள் அனைத்தும் சரியான முறையில் திரும்ப ஒப்படைக்கப்பட்டதும் பாதுகாப்பு வைப்புத்தொகை முழுமையாகத் திருப்பித் தரப்படும்.',
           '3. ஏதேனும் சேதம் அல்லது இழப்பு ஏற்பட்டால் அதற்கான தொகை வைப்புத்தொகையிலிருந்து கழிக்கப்படும் அல்லது தனியாக வசூலிக்கப்படும்.',
           '4. கூடுதல் நாளுக்கான வாடகையைத் தவிர்க்க குறிப்பிட்ட தேதிக்குள் பொருட்களைத் திரும்ப ஒப்படைக்கவும்.',
         ]
       : [
-          '1. All rented items remain the property of Annapoorna Catering and must be returned clean, dry, and undamaged.',
+          '1. All rented items remain the property of Kanchi Ambal Catering and must be returned clean, dry, and undamaged.',
           '2. Refundable security deposit will be settled promptly upon safe inspection and verification of all returned inventory.',
           '3. Any breakage, dent, or missing items will be deducted from the security deposit or charged at replacement cost.',
           '4. Please adhere to the agreed return schedule to avoid additional daily rental charges.',
         ],
     custSign: isTa ? 'வாடிக்கையாளர் கையொப்பம்' : 'Customer Signature',
-    repSign: isTa ? 'அன்னபூர்ணா கேட்டரிங் சார்பாக' : 'For Annapoorna Catering',
+    repSign: isTa ? 'காஞ்சி அம்பாள் கேட்டரிங் சார்பாக' : 'For Kanchi Ambal Catering',
     pageOf: isTa ? 'பக்கம்' : 'Page',
     of: isTa ? '/' : 'of',
   };
@@ -144,22 +144,22 @@ export async function generateRentalPDF(
     ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
 
     // Decorative Borders
-    ctx.strokeStyle = '#F1F5F9';
+    ctx.strokeStyle = '#EFF6FF';
     ctx.lineWidth = 14;
     ctx.strokeRect(20, 20, PAGE_WIDTH - 40, PAGE_HEIGHT - 40);
 
-    ctx.strokeStyle = '#EA580C';
+    ctx.strokeStyle = '#0966CC';
     ctx.lineWidth = 2.5;
     ctx.strokeRect(32, 32, PAGE_WIDTH - 64, PAGE_HEIGHT - 64);
 
     let y = 48;
 
     // ─── TOP HEADER BAND ──────────────────────────────────────
-    ctx.fillStyle = '#EA580C';
+    ctx.fillStyle = '#0966CC';
     ctx.fillRect(45, y, PAGE_WIDTH - 90, 115);
 
-    // Gold accent line
-    ctx.fillStyle = '#F59E0B';
+    // Accent line
+    ctx.fillStyle = '#3B82F6';
     ctx.fillRect(45, y + 111, PAGE_WIDTH - 90, 4);
 
     // Logo
@@ -180,7 +180,7 @@ export async function generateRentalPDF(
     ctx.fillText(siteConfig.name, 175, y + 44);
 
     ctx.font = 'bold 16px "Noto Sans Tamil", "Inter", sans-serif';
-    ctx.fillStyle = '#FEF3C7';
+    ctx.fillStyle = '#EFF6FF';
     ctx.fillText(L.title, 175, y + 74);
 
     ctx.font = '13px "Inter", "Segoe UI", sans-serif';
@@ -430,7 +430,7 @@ export async function generateRentalPDF(
         ctx.font = isBold ? 'bold 12px "Noto Sans Tamil", "Inter", sans-serif' : '12px "Noto Sans Tamil", "Inter", sans-serif';
         ctx.fillText(label, summaryX + 18, sy);
 
-        if (isOrange) ctx.fillStyle = '#EA580C';
+        if (isOrange) ctx.fillStyle = '#0966CC';
         else if (isGreen) ctx.fillStyle = '#16A34A';
         else ctx.fillStyle = '#0F172A';
 
@@ -456,7 +456,7 @@ export async function generateRentalPDF(
       ctx.strokeStyle = '#CBD5E1';
       ctx.lineWidth = 1;
       ctx.strokeRect(summaryX + 12, sy - 14, summaryW - 24, 28);
-      ctx.fillStyle = '#FFF7ED';
+      ctx.fillStyle = '#EFF6FF';
       ctx.fillRect(summaryX + 12, sy - 14, summaryW - 24, 28);
 
       sRow(L.grandTotal, formatInr(doc.grandTotal), true, true);
@@ -469,11 +469,11 @@ export async function generateRentalPDF(
       const termsW = PAGE_WIDTH - 90 - summaryW - 24;
       ctx.fillStyle = '#FAFAFA';
       ctx.fillRect(45, y, termsW, summaryH);
-      ctx.strokeStyle = '#E2E8F0';
+      ctx.strokeStyle = '#DCE8F5';
       ctx.lineWidth = 1;
       ctx.strokeRect(45, y, termsW, summaryH);
 
-      ctx.fillStyle = '#EA580C';
+      ctx.fillStyle = '#0966CC';
       ctx.font = 'bold 12px "Noto Sans Tamil", "Inter", sans-serif';
       ctx.fillText(L.termsTitle, 58, y + 26);
 
@@ -550,8 +550,8 @@ export async function generateRentalPDF(
 
   onProgress?.(98, 'Finalizing PDF download…');
 
-  // Exact required naming: Annapoorna-Rental-[RentalNo]-[EN|TA].pdf
-  const filename = `Annapoorna-Rental-${doc.rentalNumber}-${language.toUpperCase()}.pdf`;
+  // Exact required naming: Kanchi-Ambal-Rental-[RentalNo]-[EN|TA].pdf
+  const filename = `Kanchi-Ambal-Rental-${doc.rentalNumber}-${language.toUpperCase()}.pdf`;
   pdf.save(filename);
 
   onProgress?.(100, 'Complete!');

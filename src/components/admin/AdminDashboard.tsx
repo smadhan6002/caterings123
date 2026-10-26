@@ -120,7 +120,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
           value={totalOrders}
           icon={<ShoppingBag size={22} />}
           color="text-primary"
-          bgColor="bg-orange-100"
+          bgColor="bg-blue-100"
         />
         <StatCard
           label={isTa ? 'மொத்த வாடிக்கையாளர்கள்' : 'Saved Customers'}

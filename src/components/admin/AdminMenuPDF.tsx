@@ -73,12 +73,12 @@ export const AdminMenuPDF: React.FC = () => {
 
       {/* Progress & Success notification */}
       {downloading && (
-        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-orange-900">
+        <div className="bg-[#EFF6FF] border border-[#DCE8F5] rounded-xl p-4 space-y-2">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#123B75]">
             <span>{progress.status}</span>
             <span>{progress.percent}%</span>
           </div>
-          <div className="w-full bg-orange-200/60 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-blue-200/60 rounded-full h-2 overflow-hidden">
             <div
               className="bg-primary h-full transition-all duration-300"
               style={{ width: `${progress.percent}%` }}
@@ -92,8 +92,8 @@ export const AdminMenuPDF: React.FC = () => {
           <CheckCircle2 size={20} className="text-green-600 flex-shrink-0" />
           <span>
             {isTa
-              ? 'உணவு மெனு PDF வெற்றிகரமாகப் பதிவிறக்கப்பட்டது! (Annapoorna_Catering_Food_Menu.pdf)'
-              : 'Food Menu PDF generated and downloaded successfully! (Annapoorna_Catering_Food_Menu.pdf)'}
+              ? 'உணவு மெனு PDF வெற்றிகரமாகப் பதிவிறக்கப்பட்டது! (Kanchi_Ambal_Catering_Food_Menu.pdf)'
+              : 'Food Menu PDF generated and downloaded successfully! (Kanchi_Ambal_Catering_Food_Menu.pdf)'}
           </span>
         </div>
       )}
@@ -101,7 +101,7 @@ export const AdminMenuPDF: React.FC = () => {
       {/* Menu Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-xl bg-orange-100 text-primary flex items-center justify-center flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-blue-100 text-primary flex items-center justify-center flex-shrink-0">
             <Utensils size={22} />
           </div>
           <div>

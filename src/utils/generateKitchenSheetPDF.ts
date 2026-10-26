@@ -39,11 +39,11 @@ function generateEnglishVectorPDF(sheet: KitchenOrderSheet): void {
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
 
-  const primaryColor: [number, number, number] = [234, 88, 12]; // #EA580C
-  const darkColor: [number, number, number] = [30, 41, 59];    // #1E293B
-  const slate600: [number, number, number] = [71, 85, 105];   // #475569
-  const lightGray: [number, number, number] = [248, 250, 252];
-  const borderGray: [number, number, number] = [226, 232, 240];
+  const primaryColor: [number, number, number] = [9, 102, 204]; // #0966CC Primary Blue
+  const darkColor: [number, number, number] = [36, 54, 75];     // #24364B Body Text
+  const slate600: [number, number, number] = [100, 116, 139];   // #64748B Muted Text
+  const lightGray: [number, number, number] = [239, 246, 255];  // #EFF6FF Light Blue
+  const borderGray: [number, number, number] = [220, 232, 245]; // #DCE8F5 Light Border
 
   let y = 0;
 
@@ -251,7 +251,7 @@ function generateEnglishVectorPDF(sheet: KitchenOrderSheet): void {
   doc.text('Verified & Dispatched by: ________________', 14 + signColW * 2, y + 8);
 
   // Save PDF
-  doc.save(`Annapoorna-Kitchen-Order-${sheet.orderId}.pdf`);
+  doc.save(`Kanchi-Ambal-Kitchen-Order-${sheet.orderId}.pdf`);
 }
 
 /**
@@ -298,18 +298,18 @@ async function generateTamilCanvasPDF(
     ctx.lineWidth = 12;
     ctx.strokeRect(20, 20, PAGE_WIDTH - 40, PAGE_HEIGHT - 40);
 
-    ctx.strokeStyle = '#EA580C';
+    ctx.strokeStyle = '#0966CC';
     ctx.lineWidth = 2;
     ctx.strokeRect(32, 32, PAGE_WIDTH - 64, PAGE_HEIGHT - 64);
 
     let y = 50;
 
     // ─── HEADER BAND ──────────────────────────────────────
-    ctx.fillStyle = '#EA580C';
+    ctx.fillStyle = '#0966CC';
     ctx.fillRect(45, y, PAGE_WIDTH - 90, 110);
 
-    // Gold accent stripe
-    ctx.fillStyle = '#F59E0B';
+    // Accent stripe
+    ctx.fillStyle = '#3B82F6';
     ctx.fillRect(45, y + 106, PAGE_WIDTH - 90, 4);
 
     // Logo (if available)
@@ -330,21 +330,21 @@ async function generateTamilCanvasPDF(
     ctx.fillText(siteConfig.name, 160, y + 42);
 
     ctx.font = 'bold 18px "Noto Sans Tamil", "Inter", sans-serif';
-    ctx.fillStyle = '#FEF3C7';
+    ctx.fillStyle = '#EFF6FF';
     ctx.fillText('சமையல் தயாரிப்பு பட்டியல் (KITCHEN ORDER SHEET)', 160, y + 72);
 
     ctx.font = '14px "Noto Sans Tamil", "Inter", sans-serif';
     ctx.fillStyle = '#FFFFFF';
-    ctx.fillText(`Ph: +91 ${siteConfig.whatsappNumber}  •  அன்னபூர்ணா பாரம்பரிய கேட்டரிங் சர்வீஸ்`, 160, y + 96);
+    ctx.fillText(`Ph: +91 ${siteConfig.whatsappNumber}  •  காஞ்சி அம்பாள் பாரம்பரிய கேட்டரிங் சர்வீஸ்`, 160, y + 96);
 
     // Header Right: Order ID badge
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(PAGE_WIDTH - 270, y + 20, 210, 70);
-    ctx.fillStyle = '#9A3412';
+    ctx.fillStyle = '#123B75';
     ctx.font = 'bold 13px "Inter", sans-serif';
     ctx.fillText('ORDER ID', PAGE_WIDTH - 250, y + 42);
     ctx.font = 'bold 24px "Inter", sans-serif';
-    ctx.fillStyle = '#EA580C';
+    ctx.fillStyle = '#0966CC';
     ctx.fillText(sheet.orderId, PAGE_WIDTH - 250, y + 74);
 
     y += 130;
@@ -599,7 +599,7 @@ async function generateTamilCanvasPDF(
     }
   }
 
-  doc.save(`Annapoorna-Kitchen-Order-${sheet.orderId}.pdf`);
+  doc.save(`Kanchi-Ambal-Kitchen-Order-${sheet.orderId}.pdf`);
 }
 
 /**

@@ -438,7 +438,7 @@ export const AdminRentalItems: React.FC = () => {
 
         <div className="bg-white rounded-2xl p-4 shadow-xs border border-slate-200/80">
           <p className="text-xs font-semibold text-slate-500 uppercase">{isTa ? 'தற்போது வாடகையில் உள்ளவை' : 'Currently Rented Out'}</p>
-          <p className="text-2xl font-bold text-orange-600 mt-1">{totalRentedOut}</p>
+          <p className="text-2xl font-bold text-primary mt-1">{totalRentedOut}</p>
           <p className="text-[11px] text-slate-500 mt-0.5">{isTa ? 'பாத்திரங்கள் / உபகரணங்கள்' : 'units out on rent'}</p>
         </div>
 
@@ -455,7 +455,7 @@ export const AdminRentalItems: React.FC = () => {
           onClick={() => setActiveTab('documents')}
           className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
             activeTab === 'documents'
-              ? 'border-primary text-primary bg-orange-50/50'
+              ? 'border-primary text-primary bg-blue-50/70'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -470,7 +470,7 @@ export const AdminRentalItems: React.FC = () => {
           onClick={() => setActiveTab('inventory')}
           className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
             activeTab === 'inventory'
-              ? 'border-primary text-primary bg-orange-50/50'
+              ? 'border-primary text-primary bg-blue-50/70'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -485,7 +485,7 @@ export const AdminRentalItems: React.FC = () => {
           onClick={() => setActiveTab('categories')}
           className={`px-4 py-2.5 rounded-t-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer border-b-2 flex items-center gap-2 ${
             activeTab === 'categories'
-              ? 'border-primary text-primary bg-orange-50/50'
+              ? 'border-primary text-primary bg-blue-50/70'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -655,10 +655,10 @@ export const AdminRentalItems: React.FC = () => {
                               <button
                                 onClick={() => handleDownloadPDF(doc, 'ta')}
                                 disabled={downloadingDocId !== null}
-                                className="p-1.5 text-primary hover:bg-orange-50 rounded-lg cursor-pointer transition-colors"
+                                className="p-1.5 text-primary hover:bg-blue-50 rounded-lg cursor-pointer transition-colors"
                                 title="Download Tamil PDF (தமிழ் PDF)"
                               >
-                                <span className="text-[10px] font-bold border border-orange-300 px-1.5 py-0.5 rounded bg-orange-50">
+                                <span className="text-[10px] font-bold border border-blue-300 px-1.5 py-0.5 rounded bg-blue-50">
                                   தமிழ்
                                 </span>
                               </button>
@@ -903,7 +903,7 @@ export const AdminRentalItems: React.FC = () => {
                 <div key={cat.id} className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
                   <div className="flex items-center justify-between">
                     <h4 className="font-bold text-slate-900 text-sm sm:text-base">{cat.name}</h4>
-                    <span className="text-xs bg-orange-50 text-primary font-bold px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-blue-100 text-primary font-bold px-2 py-0.5 rounded-full">
                       {count} items
                     </span>
                   </div>

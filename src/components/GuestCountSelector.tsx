@@ -7,9 +7,9 @@ export const GuestCountSelector: React.FC = () => {
   const { guestCount, setGuestCount } = useCart();
   const { t } = useLanguage();
   const [isCustom, setIsCustom] = useState(false);
-  
+
   const presets = [50, 100, 150, 200];
-  
+
   // If the current guest count isn't in presets and isn't null, it's custom.
   const currentIsCustom = isCustom || (guestCount !== null && !presets.includes(guestCount));
 
@@ -33,29 +33,29 @@ export const GuestCountSelector: React.FC = () => {
               setIsCustom(false);
             }}
             className={cn(
-              "px-4 py-1.5 rounded-md text-sm transition-colors border",
+              'px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 border cursor-pointer',
               guestCount === preset && !isCustom
-                ? "bg-primary text-white border-primary shadow-xs"
-                : "bg-white text-blue-900 border-blue-200 hover:bg-blue-50 font-medium"
+                ? 'bg-[#0966CC] text-white border-[#0966CC] shadow-xs'
+                : 'bg-white text-[#123B75] border-[#DCE8F5] hover:bg-[#EFF6FF] hover:border-blue-300'
             )}
           >
             {preset}
           </button>
         ))}
-        
+
         <button
           onClick={() => setIsCustom(true)}
           className={cn(
-            "px-4 py-1.5 rounded-md text-sm transition-colors border",
+            'px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 border cursor-pointer',
             currentIsCustom
-              ? "bg-primary text-white border-primary shadow-xs"
-              : "bg-white text-blue-900 border-blue-200 hover:bg-blue-50 font-medium"
+              ? 'bg-[#0966CC] text-white border-[#0966CC] shadow-xs'
+              : 'bg-white text-[#123B75] border-[#DCE8F5] hover:bg-[#EFF6FF] hover:border-blue-300'
           )}
         >
           {t.custom}
         </button>
       </div>
-      
+
       {currentIsCustom && (
         <input
           type="number"
@@ -63,10 +63,9 @@ export const GuestCountSelector: React.FC = () => {
           placeholder={t.enterGuestCount}
           value={guestCount || ''}
           onChange={handleCustomChange}
-          className="w-full px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 text-slate-800"
+          className="w-full px-3.5 py-2.5 border border-[#DCE8F5] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0966CC]/30 focus:border-[#0966CC] text-[#24364B] bg-white text-sm"
         />
       )}
     </div>
   );
 };
-
