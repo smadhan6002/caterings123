@@ -252,6 +252,14 @@ export const en = {
     sendTest: 'Send Test',
     dispatch: 'Dispatch Campaign',
   },
+  adminInventory: {
+    title: 'Grocery & Vegetable Inventory',
+    subtitle: 'Manage ingredients, groceries, spices, and create catering purchase lists',
+    createDoc: 'Create Purchase / Stock List',
+    addItem: '+ Add Item',
+    catalogueTab: 'Inventory Catalogue',
+    historyTab: 'Document History',
+  },
 };
 
 export type Translations = typeof en;

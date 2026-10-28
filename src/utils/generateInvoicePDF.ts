@@ -24,10 +24,10 @@ function inr(amount: number): string {
 export function generateInvoicePDF(order: Order, invoice: Invoice): void {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-  const primaryColor: [number, number, number] = [9, 102, 204]; // #0966CC Primary Blue
-  const darkColor: [number, number, number] = [36, 54, 75];     // #24364B Body Text
-  const lightGray: [number, number, number] = [239, 246, 255];  // #EFF6FF Light Blue
-  const borderGray: [number, number, number] = [220, 232, 245]; // #DCE8F5 Light Border
+  const primaryColor: [number, number, number] = [234, 88, 12]; // #EA580C Primary Orange
+  const darkColor: [number, number, number] = [30, 41, 59];     // #1E293B Body Text
+  const lightGray: [number, number, number] = [255, 247, 237];  // #FFF7ED Light Orange
+  const borderGray: [number, number, number] = [254, 215, 170]; // #FED7AA Light Border
 
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();

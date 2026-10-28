@@ -23,7 +23,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
   const displayName = dishName(item.id, item.name);
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-[#DCE8F5] hover:border-blue-300 transition-all duration-200 flex flex-col group">
+    <div className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md border border-slate-200 hover:border-orange-300 transition-all duration-200 flex flex-col group">
       {/* Dish Image */}
       <div className="relative w-full aspect-[4/3] bg-slate-100 overflow-hidden">
         <img
@@ -36,7 +36,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
 
       {/* Dish Card Content */}
       <div className="p-3 sm:p-4 flex flex-col justify-between flex-1 gap-2.5">
-        <h3 className="font-bold text-[#123B75] text-xs sm:text-sm line-clamp-2 leading-snug min-h-[2rem] sm:min-h-[2.5rem]">
+        <h3 className="font-bold text-slate-900 text-xs sm:text-sm line-clamp-2 leading-snug min-h-[2rem] sm:min-h-[2.5rem]">
           {displayName}
         </h3>
 
@@ -46,7 +46,7 @@ export const MenuItemCard: React.FC<MenuItemCardProps> = ({ item }) => {
           className={`w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 ${
             isAdded
               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs cursor-default'
-              : 'bg-[#0966CC] hover:bg-[#123B75] text-white border border-blue-600/30 shadow-xs hover:shadow-md cursor-pointer active:scale-[0.98]'
+              : 'bg-primary hover:bg-[#c2410c] text-white border border-orange-600/30 shadow-xs hover:shadow-md cursor-pointer active:scale-[0.98]'
           }`}
         >
           {isAdded ? (

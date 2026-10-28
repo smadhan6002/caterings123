@@ -45,18 +45,18 @@ function LanguageSwitcher() {
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Language: ${current.native}`}
-        className="bg-[#EFF6FF] hover:bg-blue-100/70 text-[#123B75] text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-[#DCE8F5] transition-all duration-150 flex items-center gap-1 sm:gap-1.5 cursor-pointer shadow-2xs"
+        className="bg-white hover:bg-orange-50 text-slate-800 text-xs sm:text-sm font-semibold px-2 sm:px-3 py-1.5 sm:py-2 rounded-xl border border-slate-200 transition-all duration-150 flex items-center gap-1 sm:gap-1.5 cursor-pointer shadow-2xs"
       >
         <span className="text-xs sm:text-sm leading-none">{lang === 'ta' ? '🇮🇳' : '🌐'}</span>
         <span className="hidden min-[380px]:inline text-xs sm:text-sm">{current.native}</span>
-        <ChevronDown className={`w-3 h-3 text-[#0966CC] transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3 h-3 text-primary transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
         <div
           role="listbox"
           aria-label="Select language"
-          className="absolute top-full right-0 mt-2 z-50 bg-white rounded-xl shadow-xl border border-[#DCE8F5] overflow-hidden min-w-[130px]"
+          className="absolute top-full right-0 mt-2 z-50 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden min-w-[130px]"
         >
           {options.map((opt) => (
             <button
@@ -69,12 +69,12 @@ function LanguageSwitcher() {
               }}
               className={`w-full flex items-center justify-between gap-3 px-4 py-2.5 text-xs sm:text-sm transition-colors cursor-pointer ${
                 lang === opt.value
-                  ? 'bg-[#EFF6FF] text-[#0966CC] font-bold'
-                  : 'text-[#24364B] hover:bg-slate-50'
+                  ? 'bg-orange-50 text-primary font-bold'
+                  : 'text-slate-700 hover:bg-slate-50'
               }`}
             >
               <span>{opt.native}</span>
-              {lang === opt.value && <Check className="w-3.5 h-3.5 text-[#0966CC]" />}
+              {lang === opt.value && <Check className="w-3.5 h-3.5 text-primary" />}
             </button>
           ))}
         </div>
@@ -89,10 +89,10 @@ function AdminLoginButton() {
   return (
     <button
       onClick={() => navigate('/admin')}
-      className="bg-[#0966CC] hover:bg-[#123B75] text-white text-xs sm:text-sm font-semibold px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl shadow-xs hover:shadow-md transition-all duration-150 flex items-center gap-1.5 cursor-pointer border border-blue-600/30"
+      className="bg-primary hover:bg-[#c2410c] text-white text-xs sm:text-sm font-semibold px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl shadow-xs hover:shadow-md transition-all duration-150 flex items-center gap-1.5 cursor-pointer border border-orange-600/30 active:scale-[0.98]"
       aria-label="Admin login"
     >
-      <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-100" />
+      <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
       <span>{t.admin}</span>
     </button>
   );
@@ -124,8 +124,8 @@ function MainApp() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24">
-      {/* Header — White with Blue Branding */}
-      <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#DCE8F5] shadow-2xs">
+      {/* Header — White with Orange Branding */}
+      <header className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 md:h-18 flex items-center justify-between gap-2">
           {/* Logo & Business Name */}
           <a
@@ -136,13 +136,13 @@ function MainApp() {
             <img
               src={logoImg}
               alt="Kanchi Ambal Catering Logo"
-              className="h-9 w-9 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain rounded-full border border-[#DCE8F5] bg-white p-0.5 shadow-2xs transition-transform group-hover:scale-105 duration-200 flex-shrink-0"
+              className="h-9 w-9 sm:h-11 sm:w-11 md:h-12 md:w-12 object-contain rounded-full border border-slate-200 bg-white p-0.5 shadow-2xs transition-transform group-hover:scale-105 duration-200 flex-shrink-0"
             />
             <div className="min-w-0">
-              <span className="block font-bold text-sm sm:text-base md:text-xl text-[#123B75] tracking-tight truncate group-hover:text-[#0966CC] transition-colors">
+              <span className="block font-bold text-sm sm:text-base md:text-xl text-slate-900 tracking-tight truncate group-hover:text-primary transition-colors">
                 {siteConfig.name}
               </span>
-              <span className="hidden sm:block text-[10px] md:text-xs font-medium text-[#64748B] -mt-0.5 truncate">
+              <span className="hidden sm:block text-[10px] md:text-xs font-medium text-slate-500 -mt-0.5 truncate">
                 {lang === 'ta' ? 'பாரம்பரிய கேட்டரிங் சேவைகள்' : 'Authentic Traditional Feast Catering'}
               </span>
             </div>

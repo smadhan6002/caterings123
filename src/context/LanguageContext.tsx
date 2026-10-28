@@ -66,7 +66,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
 export function useLanguage(): LanguageContextType {
   const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error('useLanguage must be used within a LanguageProvider');
+  if (!ctx) { return { lang: 'en', t: locales.en, setLang: () => {}, dishName: (_id, name) => name, categoryName: (_id, name) => name }; }
   return ctx;
 }
 

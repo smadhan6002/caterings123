@@ -1,64 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #0966cc;
-  --color-primary-dark: #123b75;
-  --color-primary-light: #eff6ff;
-  --color-navy: #123b75;
-  --color-navy-dark: #0c274e;
-  --color-secondary: #3b82f6;
-  --color-light-blue: #eff6ff;
-  --color-light-border: #dce8f5;
-  --color-body-text: #24364b;
-  --color-muted-text: #64748b;
+  --color-primary: #ea580c;
+  --color-primary-dark: #c2410c;
+  --color-primary-light: #ffedd5;
   --font-sans: "Inter", "system-ui", "sans-serif";
-
-  /* Refined Blue & Slate Palette for crisp text */
-  --color-slate-900: #123b75; /* Dark Navy Blue */
-  --color-slate-800: #19488a; /* Deep Navy */
-  --color-slate-700: #24364b; /* Body Text */
-  --color-slate-600: #475569; /* Slate 600 */
-  --color-slate-500: #64748b; /* Muted Text */
 }
 
 :root {
-  --color-primary: #0966cc;
-  --color-primary-dark: #123b75;
-  --color-secondary: #3b82f6;
-  --color-light-bg: #eff6ff;
-  --color-light-border: #dce8f5;
-  --color-body-text: #24364b;
+  --color-primary: #ea580c;
+  --color-primary-dark: #c2410c;
+  --color-light-bg: #fff7ed;
+  --color-light-border: #fed7aa;
+  --color-body-text: #1e293b;
   --color-muted-text: #64748b;
-  --color-text-primary: #123b75;
-  --color-text-secondary: #24364b;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
   --color-text-muted: #64748b;
-  --color-link: #0966cc;
+  --color-link: #ea580c;
 }
 
 body {
-  color: #24364b;
+  color: #1e293b;
   background-color: #f8fafc;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings default to rich dark navy blue */
+/* Headings default to rich dark slate */
 h1, h2, h3, h4, h5, h6 {
-  color: #123b75;
+  color: #0f172a;
 }
 
-/* Ensure website texts adhere to the Blue & White design system */
-.text-slate-900 {
-  color: #123b75;
+/* Hero Section Heading: Pure white fill with royal blue stroke outline */
+.hero-title {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  -webkit-text-stroke: 1.5px #1675E8;
+  paint-order: stroke fill;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(22, 117, 232, 0.3);
 }
-.text-slate-800 {
-  color: #19488a;
+
+@media (min-width: 640px) {
+  .hero-title {
+    -webkit-text-stroke: 2px #1675E8;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(22, 117, 232, 0.35);
+  }
 }
-.text-slate-700 {
-  color: #24364b;
-}
-.text-slate-500 {
-  color: #64748b;
+
+@media (min-width: 1024px) {
+  .hero-title {
+    -webkit-text-stroke: 2.5px #1675E8;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.28), 0 2px 5px rgba(22, 117, 232, 0.4);
+  }
 }
 
 /* Hide scrollbar for category nav but allow smooth scrolling */

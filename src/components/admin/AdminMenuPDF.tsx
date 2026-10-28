@@ -73,12 +73,12 @@ export const AdminMenuPDF: React.FC = () => {
 
       {/* Progress & Success notification */}
       {downloading && (
-        <div className="bg-[#EFF6FF] border border-[#DCE8F5] rounded-xl p-4 space-y-2">
-          <div className="flex items-center justify-between text-xs font-semibold text-[#123B75]">
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 space-y-2">
+          <div className="flex items-center justify-between text-xs font-semibold text-slate-800">
             <span>{progress.status}</span>
             <span>{progress.percent}%</span>
           </div>
-          <div className="w-full bg-blue-200/60 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-orange-200/70 rounded-full h-2 overflow-hidden">
             <div
               className="bg-primary h-full transition-all duration-300"
               style={{ width: `${progress.percent}%` }}

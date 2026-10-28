@@ -35,8 +35,8 @@ export const GuestCountSelector: React.FC = () => {
             className={cn(
               'px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 border cursor-pointer',
               guestCount === preset && !isCustom
-                ? 'bg-[#0966CC] text-white border-[#0966CC] shadow-xs'
-                : 'bg-white text-[#123B75] border-[#DCE8F5] hover:bg-[#EFF6FF] hover:border-blue-300'
+                ? 'bg-primary text-white border-primary shadow-xs'
+                : 'bg-white text-slate-700 border-slate-200 hover:bg-orange-50 hover:border-orange-300 hover:text-primary'
             )}
           >
             {preset}
@@ -48,8 +48,8 @@ export const GuestCountSelector: React.FC = () => {
           className={cn(
             'px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 border cursor-pointer',
             currentIsCustom
-              ? 'bg-[#0966CC] text-white border-[#0966CC] shadow-xs'
-              : 'bg-white text-[#123B75] border-[#DCE8F5] hover:bg-[#EFF6FF] hover:border-blue-300'
+              ? 'bg-primary text-white border-primary shadow-xs'
+              : 'bg-white text-slate-700 border-slate-200 hover:bg-orange-50 hover:border-orange-300 hover:text-primary'
           )}
         >
           {t.custom}
@@ -63,7 +63,7 @@ export const GuestCountSelector: React.FC = () => {
           placeholder={t.enterGuestCount}
           value={guestCount || ''}
           onChange={handleCustomChange}
-          className="w-full px-3.5 py-2.5 border border-[#DCE8F5] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0966CC]/30 focus:border-[#0966CC] text-[#24364B] bg-white text-sm"
+          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-slate-900 bg-white text-sm"
         />
       )}
     </div>

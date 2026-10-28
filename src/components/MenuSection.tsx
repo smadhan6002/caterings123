@@ -30,10 +30,10 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ category }) => {
   return (
     <section id={`category-${category.id}`} className="py-6 sm:py-8 scroll-mt-28 sm:scroll-mt-32">
       <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <h2 className="text-xl sm:text-2xl font-bold text-[#123B75] tracking-tight">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
           {categoryName(category.id, category.name)}
         </h2>
-        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#EFF6FF] text-[#0966CC] border border-[#DCE8F5]">
+        <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-orange-50 text-primary border border-orange-200">
           {dishes.length}
         </span>
       </div>

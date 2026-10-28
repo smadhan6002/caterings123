@@ -354,7 +354,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
                 type="button"
                 onClick={handleDownloadPDF}
                 disabled={downloading}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary hover:bg-[#123B75] text-white rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary hover:bg-[#c2410c] text-white rounded-xl text-xs font-semibold shadow-xs transition-all cursor-pointer disabled:opacity-50"
               >
                 <Download size={14} />
                 <span>{downloading ? (isTa ? 'பதிவிறக்குகிறது…' : 'Downloading…') : (isTa ? 'PDF பதிவிறக்கு' : 'Download PDF')}</span>
@@ -708,7 +708,7 @@ export const KitchenOrderSheetModal: React.FC<KitchenOrderSheetModalProps> = ({
                           <th className="py-2.5 px-3 text-center w-10">#</th>
                           <th className="py-2.5 px-4 text-left">Food Item / Dish Name</th>
                           <th className="py-2.5 px-3 text-center w-28">Customer Qty</th>
-                          <th className="py-2.5 px-3 text-center w-28 bg-[#123B75]">Final Prep Qty</th>
+                          <th className="py-2.5 px-3 text-center w-28 bg-slate-800">Final Prep Qty</th>
                           <th className="py-2.5 px-3 text-center w-24">Unit</th>
                           <th className="py-2.5 px-4 text-left">Kitchen Notes</th>
                         </tr>

@@ -144,22 +144,22 @@ export async function generateRentalPDF(
     ctx.fillRect(0, 0, PAGE_WIDTH, PAGE_HEIGHT);
 
     // Decorative Borders
-    ctx.strokeStyle = '#EFF6FF';
+    ctx.strokeStyle = '#FFF7ED';
     ctx.lineWidth = 14;
     ctx.strokeRect(20, 20, PAGE_WIDTH - 40, PAGE_HEIGHT - 40);
 
-    ctx.strokeStyle = '#0966CC';
+    ctx.strokeStyle = '#EA580C';
     ctx.lineWidth = 2.5;
     ctx.strokeRect(32, 32, PAGE_WIDTH - 64, PAGE_HEIGHT - 64);
 
     let y = 48;
 
     // ─── TOP HEADER BAND ──────────────────────────────────────
-    ctx.fillStyle = '#0966CC';
+    ctx.fillStyle = '#EA580C';
     ctx.fillRect(45, y, PAGE_WIDTH - 90, 115);
 
     // Accent line
-    ctx.fillStyle = '#3B82F6';
+    ctx.fillStyle = '#F59E0B';
     ctx.fillRect(45, y + 111, PAGE_WIDTH - 90, 4);
 
     // Logo
@@ -180,7 +180,7 @@ export async function generateRentalPDF(
     ctx.fillText(siteConfig.name, 175, y + 44);
 
     ctx.font = 'bold 16px "Noto Sans Tamil", "Inter", sans-serif';
-    ctx.fillStyle = '#EFF6FF';
+    ctx.fillStyle = '#FEF3C7';
     ctx.fillText(L.title, 175, y + 74);
 
     ctx.font = '13px "Inter", "Segoe UI", sans-serif';
@@ -430,7 +430,7 @@ export async function generateRentalPDF(
         ctx.font = isBold ? 'bold 12px "Noto Sans Tamil", "Inter", sans-serif' : '12px "Noto Sans Tamil", "Inter", sans-serif';
         ctx.fillText(label, summaryX + 18, sy);
 
-        if (isOrange) ctx.fillStyle = '#0966CC';
+        if (isOrange) ctx.fillStyle = '#EA580C';
         else if (isGreen) ctx.fillStyle = '#16A34A';
         else ctx.fillStyle = '#0F172A';
 
@@ -456,7 +456,7 @@ export async function generateRentalPDF(
       ctx.strokeStyle = '#CBD5E1';
       ctx.lineWidth = 1;
       ctx.strokeRect(summaryX + 12, sy - 14, summaryW - 24, 28);
-      ctx.fillStyle = '#EFF6FF';
+      ctx.fillStyle = '#FFF7ED';
       ctx.fillRect(summaryX + 12, sy - 14, summaryW - 24, 28);
 
       sRow(L.grandTotal, formatInr(doc.grandTotal), true, true);
@@ -469,11 +469,11 @@ export async function generateRentalPDF(
       const termsW = PAGE_WIDTH - 90 - summaryW - 24;
       ctx.fillStyle = '#FAFAFA';
       ctx.fillRect(45, y, termsW, summaryH);
-      ctx.strokeStyle = '#DCE8F5';
+      ctx.strokeStyle = '#FED7AA';
       ctx.lineWidth = 1;
       ctx.strokeRect(45, y, termsW, summaryH);
 
-      ctx.fillStyle = '#0966CC';
+      ctx.fillStyle = '#EA580C';
       ctx.font = 'bold 12px "Noto Sans Tamil", "Inter", sans-serif';
       ctx.fillText(L.termsTitle, 58, y + 26);
 

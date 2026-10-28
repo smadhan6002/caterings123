@@ -14,7 +14,7 @@ export const CartActionBar: React.FC = () => {
       <div className="max-w-md mx-auto flex justify-center pointer-events-auto">
         <button
           onClick={() => setIsCartDrawerOpen(true)}
-          className="w-full bg-[#0966CC] hover:bg-[#123B75] text-white py-3.5 px-6 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-blue-900/30 transition-all duration-150 hover:scale-[1.01] active:scale-[0.98] cursor-pointer border border-blue-500/30"
+          className="w-full bg-primary hover:bg-[#c2410c] text-white py-3.5 px-6 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2.5 shadow-xl shadow-orange-950/25 transition-all duration-150 hover:scale-[1.01] active:scale-[0.98] cursor-pointer border border-orange-500/30"
         >
           <ShoppingCart size={20} className="stroke-[2.5]" />
           <span>{t.viewCart}</span>

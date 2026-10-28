@@ -112,13 +112,13 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
           <p className="text-slate-600 text-sm mb-4">
             {t.orderSuccess}
           </p>
-          <div className="bg-[#EFF6FF] border border-[#DCE8F5] rounded-xl px-4 py-3 mb-6">
-            <p className="text-xs text-[#0966CC] font-semibold">{t.yourOrderId}</p>
-            <p className="text-xl font-bold text-[#123B75] mt-0.5">{orderId}</p>
+          <div className="bg-orange-50 border border-orange-200 rounded-xl px-4 py-3 mb-6">
+            <p className="text-xs text-primary font-semibold">{t.yourOrderId}</p>
+            <p className="text-xl font-bold text-slate-900 mt-0.5">{orderId}</p>
           </div>
           <button
             onClick={onClose}
-            className="w-full bg-[#0966CC] hover:bg-[#123B75] text-white py-3 rounded-xl font-semibold text-sm transition-all shadow-md hover:shadow-lg cursor-pointer"
+            className="w-full bg-primary hover:bg-[#c2410c] text-white py-3 rounded-xl font-semibold text-sm transition-all shadow-md hover:shadow-lg cursor-pointer"
           >
             {t.done}
           </button>
@@ -225,7 +225,7 @@ export const InquiryFormModal: React.FC<InquiryFormModalProps> = ({ isOpen, onCl
           <div className="pt-2">
             <button
               type="submit"
-              className="w-full bg-[#0966CC] hover:bg-[#123B75] text-white py-3.5 rounded-xl font-bold transition-all shadow-md hover:shadow-lg cursor-pointer mt-2"
+              className="w-full bg-primary hover:bg-[#c2410c] text-white py-3.5 rounded-xl font-bold transition-all shadow-md hover:shadow-lg cursor-pointer mt-2"
             >
               {t.sendWhatsApp}
             </button>

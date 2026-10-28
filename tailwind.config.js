@@ -8,19 +8,22 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#0966CC',
-          dark: '#123B75',
-          light: '#EFF6FF',
+          DEFAULT: '#ea580c', // orange-600
+          dark: '#c2410c',    // orange-700
+          light: '#ffedd5',   // orange-100
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          300: '#fdba74',
+          400: '#fb923c',
+          500: '#f97316',
+          600: '#ea580c',
+          700: '#c2410c',
+          800: '#9a3412',
+          900: '#7c2d12',
         },
-        navy: {
-          DEFAULT: '#123B75',
-          dark: '#0c274e',
-        },
-        secondary: '#3B82F6',
-        lightBlue: '#EFF6FF',
-        lightBorder: '#DCE8F5',
-        bodyText: '#24364B',
-        mutedText: '#64748B',
+        bodyText: '#1e293b',
+        mutedText: '#64748b',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

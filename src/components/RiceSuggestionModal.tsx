@@ -132,12 +132,12 @@ export const RiceSuggestionModal: React.FC = () => {
                     <img
                       src={item.image}
                       alt={displayName}
-                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-blue-200"
+                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-slate-200"
                       loading="lazy"
                     />
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-blue-900 truncate">{displayName}</p>
-                      <p className="text-[11px] text-blue-700/80 font-medium">{t.traditionalSide}</p>
+                      <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
+                      <p className="text-[11px] text-slate-500 font-medium">{t.traditionalSide}</p>
                     </div>
                   </div>
 
@@ -147,7 +147,7 @@ export const RiceSuggestionModal: React.FC = () => {
                     className={`flex-shrink-0 flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                       added
                         ? 'bg-green-100 text-green-800 border border-green-200 cursor-default'
-                        : 'bg-white text-blue-700 border border-blue-200 hover:border-blue-400 hover:bg-blue-50 hover:text-blue-900 active:scale-95 shadow-xs cursor-pointer'
+                        : 'bg-white text-primary border border-orange-200 hover:border-orange-400 hover:bg-orange-50 hover:text-[#c2410c] active:scale-95 shadow-xs cursor-pointer'
                     }`}
                   >
                     {added ? (
@@ -169,7 +169,7 @@ export const RiceSuggestionModal: React.FC = () => {
           <div className="flex flex-col gap-2">
             <button
               onClick={handleClose}
-              className="w-full bg-[#0966CC] hover:bg-[#123B75] text-white py-3 rounded-xl font-semibold text-sm transition-all shadow-md hover:shadow-lg cursor-pointer border border-blue-600/30"
+              className="w-full bg-primary hover:bg-[#c2410c] text-white py-3 rounded-xl font-semibold text-sm transition-all shadow-md hover:shadow-lg cursor-pointer border border-orange-600/30"
             >
               {t.continue}
             </button>

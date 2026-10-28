@@ -39,11 +39,11 @@ function generateEnglishVectorPDF(sheet: KitchenOrderSheet): void {
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
 
-  const primaryColor: [number, number, number] = [9, 102, 204]; // #0966CC Primary Blue
-  const darkColor: [number, number, number] = [36, 54, 75];     // #24364B Body Text
+  const primaryColor: [number, number, number] = [234, 88, 12]; // #EA580C Primary Orange
+  const darkColor: [number, number, number] = [30, 41, 59];     // #1E293B Body Text
   const slate600: [number, number, number] = [100, 116, 139];   // #64748B Muted Text
-  const lightGray: [number, number, number] = [239, 246, 255];  // #EFF6FF Light Blue
-  const borderGray: [number, number, number] = [220, 232, 245]; // #DCE8F5 Light Border
+  const lightGray: [number, number, number] = [255, 247, 237];  // #FFF7ED Light Orange
+  const borderGray: [number, number, number] = [254, 215, 170]; // #FED7AA Light Border
 
   let y = 0;
 
@@ -298,18 +298,18 @@ async function generateTamilCanvasPDF(
     ctx.lineWidth = 12;
     ctx.strokeRect(20, 20, PAGE_WIDTH - 40, PAGE_HEIGHT - 40);
 
-    ctx.strokeStyle = '#0966CC';
+    ctx.strokeStyle = '#EA580C';
     ctx.lineWidth = 2;
     ctx.strokeRect(32, 32, PAGE_WIDTH - 64, PAGE_HEIGHT - 64);
 
     let y = 50;
 
     // ─── HEADER BAND ──────────────────────────────────────
-    ctx.fillStyle = '#0966CC';
+    ctx.fillStyle = '#EA580C';
     ctx.fillRect(45, y, PAGE_WIDTH - 90, 110);
 
     // Accent stripe
-    ctx.fillStyle = '#3B82F6';
+    ctx.fillStyle = '#F59E0B';
     ctx.fillRect(45, y + 106, PAGE_WIDTH - 90, 4);
 
     // Logo (if available)
@@ -330,7 +330,7 @@ async function generateTamilCanvasPDF(
     ctx.fillText(siteConfig.name, 160, y + 42);
 
     ctx.font = 'bold 18px "Noto Sans Tamil", "Inter", sans-serif';
-    ctx.fillStyle = '#EFF6FF';
+    ctx.fillStyle = '#FEF3C7';
     ctx.fillText('சமையல் தயாரிப்பு பட்டியல் (KITCHEN ORDER SHEET)', 160, y + 72);
 
     ctx.font = '14px "Noto Sans Tamil", "Inter", sans-serif';
@@ -340,11 +340,11 @@ async function generateTamilCanvasPDF(
     // Header Right: Order ID badge
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(PAGE_WIDTH - 270, y + 20, 210, 70);
-    ctx.fillStyle = '#123B75';
+    ctx.fillStyle = '#9A3412';
     ctx.font = 'bold 13px "Inter", sans-serif';
     ctx.fillText('ORDER ID', PAGE_WIDTH - 250, y + 42);
     ctx.font = 'bold 24px "Inter", sans-serif';
-    ctx.fillStyle = '#0966CC';
+    ctx.fillStyle = '#EA580C';
     ctx.fillText(sheet.orderId, PAGE_WIDTH - 250, y + 74);
 
     y += 130;
