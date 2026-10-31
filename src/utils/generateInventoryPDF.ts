@@ -6,7 +6,7 @@
  * rendered via HTML5 canvas, guaranteeing 100% correct Tamil ligature shaping, pulli, kombu, and vowel markings.
  */
 import jsPDF from 'jspdf';
-import type { InventoryDocument } from '../types/inventory';
+import type { InventoryDocument, InventoryDocumentItem } from '../types/inventory';
 import { siteConfig } from '../config/site';
 import { formatUnitLabel } from '../services/inventoryService';
 import logoImg from '../assets/LOGO.png';
@@ -60,10 +60,56 @@ export async function generateInventoryPDF(
   const PAGE_HEIGHT = 1754;
 
   const hasAnyPrice = doc.items.some((it) => it.unitPrice !== undefined && it.unitPrice > 0);
+  const hasNotes = Boolean(doc.notes && doc.notes.trim());
 
-  // Distribute items across pages (~16 items per page for spacious, readable typography)
-  const itemsPerPage = 16;
-  const totalPages = Math.ceil(doc.items.length / itemsPerPage) || 1;
+  // Dynamic continuous page distribution based on actual vertical height
+  const rowHeight = 36;
+  const maxTableY = 1640;
+  const summaryH = hasAnyPrice ? 120 : 95;
+
+  // Page 1 capacities
+  const p1StartY = 48 + 132 + 94 + (hasNotes ? 44 : 0) + 36; // 310 or 354
+  const p1CapacityWithSummary = Math.floor((maxTableY - summaryH - p1StartY) / rowHeight); // ~28-32 items
+  const p1CapacityWithoutSummary = Math.floor((maxTableY - p1StartY) / rowHeight); // ~34-37 items
+
+  // Subsequent page capacities
+  const pNextStartY = 48 + 132 + 44 + 36; // 260
+  const pNextCapacityWithSummary = Math.floor((maxTableY - summaryH - pNextStartY) / rowHeight); // ~34-36 items
+  const pNextCapacityWithoutSummary = Math.floor((maxTableY - pNextStartY) / rowHeight); // ~38-40 items
+
+  // Partition items into pages dynamically
+  const pages: InventoryDocumentItem[][] = [];
+  if (doc.items.length === 0) {
+    pages.push([]);
+  } else if (doc.items.length <= p1CapacityWithSummary) {
+    pages.push(doc.items);
+  } else {
+    let remaining = [...doc.items];
+    let pIdx = 0;
+    while (remaining.length > 0) {
+      const isFirst = pIdx === 0;
+      const capWithSummary = isFirst ? p1CapacityWithSummary : pNextCapacityWithSummary;
+      const capWithoutSummary = isFirst ? p1CapacityWithoutSummary : pNextCapacityWithoutSummary;
+
+      if (remaining.length <= capWithSummary) {
+        pages.push(remaining);
+        break;
+      }
+
+      let take = capWithoutSummary;
+      const leftOver = remaining.length - take;
+      // Prevent orphaned 1-3 items on next page
+      if (leftOver > 0 && leftOver < 4 && take > 6) {
+        take = take - (4 - leftOver);
+      }
+
+      pages.push(remaining.slice(0, take));
+      remaining = remaining.slice(take);
+      pIdx++;
+    }
+  }
+
+  const totalPages = pages.length;
 
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -109,13 +155,17 @@ export async function generateInventoryPDF(
       : 'Pure Vegetarian Catering Services  •  Kanchipuram, Tamil Nadu',
   };
 
+  let runningItemIndex = 0;
+
   for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
     onProgress?.(
       20 + Math.floor((pageIdx / totalPages) * 70),
       `Rendering page ${pageIdx + 1} of ${totalPages}…`
     );
 
-    const pageItems = doc.items.slice(pageIdx * itemsPerPage, (pageIdx + 1) * itemsPerPage);
+    const pageItems = pages[pageIdx];
+    const pageItemStartIdx = runningItemIndex;
+    runningItemIndex += pageItems.length;
 
     // 1. Background fill
     ctx.fillStyle = '#FFFFFF';
@@ -310,9 +360,8 @@ export async function generateInventoryPDF(
     ctx.textAlign = 'left';
 
     // Table Rows
-    const rowHeight = 36;
     pageItems.forEach((item, rIdx) => {
-      const globalIdx = pageIdx * itemsPerPage + rIdx + 1;
+      const globalIdx = pageItemStartIdx + rIdx + 1;
       const isEven = rIdx % 2 === 0;
 
       // Row background
@@ -537,35 +586,41 @@ export function printInventoryDocument(doc: InventoryDocument, language: 'en' | 
       <meta charset="utf-8">
       <title>${doc.title} - ${doc.docNumber}</title>
       <style>
+        @page {
+          size: A4 portrait;
+          margin: 10mm;
+        }
         body {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Tamil", sans-serif;
           color: #1e293b;
           margin: 0;
-          padding: 24px;
+          padding: 16px;
         }
         .header {
           border-bottom: 3px solid #ea580c;
-          padding-bottom: 16px;
-          margin-bottom: 20px;
+          padding-bottom: 12px;
+          margin-bottom: 14px;
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
         .brand {
-          font-size: 24px;
+          font-size: 22px;
           font-weight: 800;
           color: #ea580c;
         }
         .sub {
-          font-size: 13px;
+          font-size: 12px;
           color: #64748b;
-          margin-top: 4px;
+          margin-top: 3px;
         }
         .doc-title {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: bold;
           color: #0f172a;
-          margin-top: 6px;
+          margin-top: 4px;
         }
         .meta-box {
           text-align: right;
@@ -577,9 +632,9 @@ export function printInventoryDocument(doc: InventoryDocument, language: 'en' | 
           border: 1px solid #fed7aa;
           color: #c2410c;
           font-weight: bold;
-          padding: 4px 8px;
+          padding: 3px 8px;
           border-radius: 6px;
-          font-size: 14px;
+          font-size: 13px;
           margin-bottom: 4px;
         }
         .details-grid {
@@ -588,13 +643,15 @@ export function printInventoryDocument(doc: InventoryDocument, language: 'en' | 
           background: #f8fafc;
           border: 1px solid #e2e8f0;
           border-radius: 8px;
-          padding: 12px 16px;
-          margin-bottom: 20px;
-          font-size: 13px;
-          gap: 12px;
+          padding: 10px 14px;
+          margin-bottom: 14px;
+          font-size: 12px;
+          gap: 10px;
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
         .details-grid dt {
-          font-size: 11px;
+          font-size: 10px;
           text-transform: uppercase;
           color: #9a3412;
           font-weight: bold;
@@ -607,18 +664,25 @@ export function printInventoryDocument(doc: InventoryDocument, language: 'en' | 
         table {
           width: 100%;
           border-collapse: collapse;
-          font-size: 13px;
-          margin-bottom: 24px;
+          font-size: 12px;
+          margin-bottom: 16px;
+        }
+        thead {
+          display: table-header-group;
         }
         th {
           background-color: #ea580c;
           color: #ffffff;
-          padding: 10px 12px;
+          padding: 8px 10px;
           text-align: left;
         }
         td {
-          padding: 8px 12px;
+          padding: 7px 10px;
           border-bottom: 1px solid #e2e8f0;
+        }
+        tr {
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
         tr:nth-child(even) {
           background-color: #fffbf5;
@@ -626,21 +690,24 @@ export function printInventoryDocument(doc: InventoryDocument, language: 'en' | 
         .footer-summary {
           display: flex;
           justify-content: space-between;
-          margin-top: 24px;
-          padding-top: 16px;
+          align-items: flex-end;
+          margin-top: 16px;
+          padding-top: 14px;
           border-top: 1px solid #e2e8f0;
+          page-break-inside: avoid;
+          break-inside: avoid;
         }
         .signatures {
-          font-size: 12px;
+          font-size: 11px;
           color: #64748b;
           line-height: 2.2;
         }
         .summary-card {
           background: #fff7ed;
           border: 1px solid #fed7aa;
-          padding: 12px 16px;
+          padding: 10px 14px;
           border-radius: 8px;
-          font-size: 13px;
+          font-size: 12px;
           min-width: 220px;
         }
         @media print {

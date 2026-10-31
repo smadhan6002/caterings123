@@ -267,9 +267,49 @@ async function generateTamilCanvasPDF(
 
   const logo = await loadImage(logoImg);
 
-  // Distribute dishes across pages (approx 14 dishes per page for clarity)
-  const itemsPerPage = 14;
-  const totalPages = Math.ceil(sheet.items.length / itemsPerPage) || 1;
+  // Dynamic continuous page distribution based on actual vertical height
+  const rowHeight = 44;
+  const maxTableY = 1640;
+  const footerBlocksH = sheet.cookingInstructions && sheet.cookingInstructions.trim() ? 150 : 90;
+
+  const p1StartY = 50 + 130 + 128 + 44; // 352
+  const p1CapWithBlocks = Math.floor((maxTableY - footerBlocksH - p1StartY) / rowHeight); // ~24
+  const p1CapWithoutBlocks = Math.floor((maxTableY - p1StartY) / rowHeight); // ~29
+
+  const pNextStartY = 50 + 130 + 50 + 44; // 274
+  const pNextCapWithBlocks = Math.floor((maxTableY - footerBlocksH - pNextStartY) / rowHeight); // ~27
+  const pNextCapWithoutBlocks = Math.floor((maxTableY - pNextStartY) / rowHeight); // ~31
+
+  const pages: (typeof sheet.items)[] = [];
+  if (sheet.items.length === 0) {
+    pages.push([]);
+  } else if (sheet.items.length <= p1CapWithBlocks) {
+    pages.push(sheet.items);
+  } else {
+    let remaining = [...sheet.items];
+    let pIdx = 0;
+    while (remaining.length > 0) {
+      const isFirst = pIdx === 0;
+      const capWith = isFirst ? p1CapWithBlocks : pNextCapWithBlocks;
+      const capWithout = isFirst ? p1CapWithoutBlocks : pNextCapWithoutBlocks;
+
+      if (remaining.length <= capWith) {
+        pages.push(remaining);
+        break;
+      }
+
+      let take = capWithout;
+      const leftOver = remaining.length - take;
+      if (leftOver > 0 && leftOver < 3 && take > 5) {
+        take = take - (3 - leftOver);
+      }
+      pages.push(remaining.slice(0, take));
+      remaining = remaining.slice(take);
+      pIdx++;
+    }
+  }
+
+  const totalPages = pages.length;
 
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -286,8 +326,12 @@ async function generateTamilCanvasPDF(
     throw new Error('Canvas 2D context unavailable');
   }
 
+  let runningItemOffset = 0;
+
   for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
-    const pageItems = sheet.items.slice(pageIdx * itemsPerPage, (pageIdx + 1) * itemsPerPage);
+    const pageItems = pages[pageIdx];
+    const startIdx = runningItemOffset;
+    runningItemOffset += pageItems.length;
 
     // Background
     ctx.fillStyle = '#FFFFFF';
@@ -450,9 +494,8 @@ async function generateTamilCanvasPDF(
     y += 44;
 
     // Table Rows
-    const rowHeight = 44;
     pageItems.forEach((item, rIdx) => {
-      const globalIdx = pageIdx * itemsPerPage + rIdx + 1;
+      const globalIdx = startIdx + rIdx + 1;
       const rowY = y;
 
       // Zebra striping

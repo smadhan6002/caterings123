@@ -290,9 +290,10 @@ export const inventoryService = {
     // Calculate total amount if prices are provided
     let totalAmount: number | undefined = undefined;
     const itemsWithTotals = docData.items.map((it) => {
+      const qVal = typeof it.quantity === 'number' ? it.quantity : parseFloat(String(it.quantity)) || 0;
       const itemTotal =
         typeof it.unitPrice === 'number' && !isNaN(it.unitPrice) && it.unitPrice > 0
-          ? Math.round(it.quantity * it.unitPrice * 100) / 100
+          ? Math.round(qVal * it.unitPrice * 100) / 100
           : undefined;
       if (itemTotal !== undefined) {
         totalAmount = (totalAmount || 0) + itemTotal;

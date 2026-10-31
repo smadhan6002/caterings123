@@ -47,7 +47,7 @@ export interface InventoryDocumentItem {
   nameTa: string;
   categoryNameEn?: string;
   categoryNameTa?: string;
-  quantity: number;
+  quantity: number | string;
   unit: string;
   unitPrice?: number;
   totalPrice?: number;

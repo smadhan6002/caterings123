@@ -123,20 +123,24 @@ export async function generateMenuPDF(onProgress?: (percent: number, status: str
   const PAGE_WIDTH = 1240;
   const PAGE_HEIGHT = 1754;
 
-  // We distribute categories across multiple pages cleanly
-  // ~2-3 categories per page
+  // Distribute categories dynamically based on actual rendered pixel height
   const pagesData: MenuPageCategory[][] = [];
   let currentPage: MenuPageCategory[] = [];
-  let currentDishCount = 0;
+  let currentHeight = 0;
 
   for (const cat of menuCategories) {
-    if (currentPage.length > 0 && currentDishCount + cat.dishes.length > 32) {
+    const isFirstPage = pagesData.length === 0;
+    const maxH = isFirstPage ? 1320 : 1480;
+    // Category height: 48px header + dish rows in 2 columns (40px per row) + 24px bottom gap
+    const catH = 48 + Math.ceil(cat.dishes.length / 2) * 40 + 24;
+
+    if (currentPage.length > 0 && currentHeight + catH > maxH) {
       pagesData.push(currentPage);
       currentPage = [cat];
-      currentDishCount = cat.dishes.length;
+      currentHeight = catH;
     } else {
       currentPage.push(cat);
-      currentDishCount += cat.dishes.length;
+      currentHeight += catH;
     }
   }
   if (currentPage.length > 0) {

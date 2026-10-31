@@ -126,13 +126,19 @@ export function generateInvoicePDF(order: Order, invoice: Invoice): void {
     head: [['#', 'Dish Name', 'Category']],
     body: tableBody,
     theme: 'striped',
+    showHead: 'everyPage',
     headStyles: {
       fillColor: primaryColor,
       textColor: [255, 255, 255],
       fontStyle: 'bold',
       fontSize: 9,
+      cellPadding: 2.5,
     },
-    bodyStyles: { fontSize: 9, textColor: darkColor },
+    styles: {
+      fontSize: 8.5,
+      cellPadding: 2,
+      textColor: darkColor,
+    },
     alternateRowStyles: { fillColor: lightGray },
     columnStyles: {
       0: { cellWidth: 12, halign: 'center' },
@@ -143,7 +149,7 @@ export function generateInvoicePDF(order: Order, invoice: Invoice): void {
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  y = (doc as any).lastAutoTable.finalY + 10;
+  y = (doc as any).lastAutoTable.finalY + 6;
 
   // ─── PAYMENT SUMMARY BOX WITH MULTIPLE INSTALLMENTS ───
   const payments = normalizeOrderPayments(order);
@@ -153,7 +159,7 @@ export function generateInvoicePDF(order: Order, invoice: Invoice): void {
 
   const boxW = 104;
   const boxX = pageW - 14 - boxW;
-  const rowH = 8.5;
+  const rowH = 7;
 
   const payRows: [string, string][] = [
     ['Total Amount', inr(order.totalAmount)],
@@ -168,10 +174,10 @@ export function generateInvoicePDF(order: Order, invoice: Invoice): void {
   payRows.push(['Total Paid', inr(totalPaid)]);
   payRows.push(['Balance Due', inr(remaining)]);
 
-  const boxH = 20 + payRows.length * rowH + 14;
+  const boxH = 14 + payRows.length * rowH + 12;
 
   // Add page if not enough space
-  if (y + boxH > pageH - 20) {
+  if (y + boxH > pageH - 18) {
     doc.addPage();
     y = 16;
   }

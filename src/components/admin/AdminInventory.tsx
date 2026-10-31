@@ -314,6 +314,8 @@ export const AdminInventory: React.FC = () => {
       setSelectedDocItems(selectedDocItems.filter((i) => i.catalogueItemId !== item.id));
     } else {
       const cat = categories.find((c) => c.id === item.categoryId);
+      const defaultQty = item.purchaseQuantity !== undefined ? String(item.purchaseQuantity) : '1';
+      const initialQtyNum = parseFloat(defaultQty) || 1;
       const newDocItem: InventoryDocumentItem = {
         id: `docit-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
         catalogueItemId: item.id,
@@ -321,10 +323,10 @@ export const AdminInventory: React.FC = () => {
         nameTa: item.nameTa,
         categoryNameEn: cat?.nameEn || 'Other',
         categoryNameTa: cat?.nameTa || 'பிற பொருட்கள்',
-        quantity: item.purchaseQuantity || 1,
+        quantity: defaultQty,
         unit: item.unit,
         unitPrice: item.unitPrice,
-        totalPrice: item.unitPrice ? item.unitPrice * (item.purchaseQuantity || 1) : undefined,
+        totalPrice: item.unitPrice ? Math.round(item.unitPrice * initialQtyNum * 100) / 100 : undefined,
       };
       setSelectedDocItems([...selectedDocItems, newDocItem]);
     }
@@ -332,14 +334,16 @@ export const AdminInventory: React.FC = () => {
 
   function handleAddCustomDocItem() {
     if (!customItemNameEn.trim()) return;
-    const qty = parseFloat(customItemQty) || 1;
+    const cleanQty = customItemQty.trim() !== '' ? customItemQty.trim() : '1';
+    const parsedQty = parseFloat(cleanQty);
+    const validQty = !isNaN(parsedQty) && parsedQty > 0 ? cleanQty : '1';
     const newDocItem: InventoryDocumentItem = {
       id: `docit-custom-${Date.now()}`,
       nameEn: customItemNameEn.trim(),
       nameTa: customItemNameTa.trim() || customItemNameEn.trim(),
       categoryNameEn: 'Custom / Other',
       categoryNameTa: 'சிறப்பு / இதர பொருட்கள்',
-      quantity: qty > 0 ? qty : 1,
+      quantity: validQty,
       unit: customItemUnit,
     };
     setSelectedDocItems([...selectedDocItems, newDocItem]);
@@ -349,13 +353,39 @@ export const AdminInventory: React.FC = () => {
     setShowCustomItemRow(false);
   }
 
-  function updateDocItemQuantity(id: string, qty: number) {
+  function updateDocItemQuantity(id: string, val: string) {
+    // Allow digits and at most one dot so user can type e.g. "0.", "0.99", "1.25"
+    if (val !== '' && !/^\d*\.?\d*$/.test(val)) return;
+
     setSelectedDocItems(
       selectedDocItems.map((item) => {
         if (item.id === id) {
-          const validQty = Math.max(0.01, qty);
-          const total = item.unitPrice ? Math.round(validQty * item.unitPrice * 100) / 100 : undefined;
-          return { ...item, quantity: validQty, totalPrice: total };
+          const parsed = parseFloat(val);
+          const total =
+            item.unitPrice && !isNaN(parsed) && parsed > 0
+              ? Math.round(parsed * item.unitPrice * 100) / 100
+              : undefined;
+          return { ...item, quantity: val, totalPrice: total };
+        }
+        return item;
+      })
+    );
+  }
+
+  function handleBlurDocItemQuantity(id: string) {
+    setSelectedDocItems(
+      selectedDocItems.map((item) => {
+        if (item.id === id) {
+          const raw = String(item.quantity).trim();
+          const parsed = parseFloat(raw);
+          if (raw === '' || isNaN(parsed) || parsed <= 0) {
+            const total = item.unitPrice ? Math.round(1 * item.unitPrice * 100) / 100 : undefined;
+            return { ...item, quantity: '1', totalPrice: total };
+          }
+          // Clean up dangling decimal points e.g. "2." -> "2"
+          const cleanVal = raw.endsWith('.') ? String(parsed) : raw;
+          const total = item.unitPrice ? Math.round(parsed * item.unitPrice * 100) / 100 : undefined;
+          return { ...item, quantity: cleanVal, totalPrice: total };
         }
         return item;
       })
@@ -369,12 +399,15 @@ export const AdminInventory: React.FC = () => {
   }
 
   function updateDocItemPrice(id: string, priceStr: string) {
+    // Only allow decimal input
+    if (priceStr !== '' && !/^\d*\.?\d*$/.test(priceStr)) return;
     setSelectedDocItems(
       selectedDocItems.map((item) => {
         if (item.id === id) {
           const price = priceStr.trim() !== '' ? parseFloat(priceStr) : undefined;
           const validPrice = price !== undefined && !isNaN(price) && price >= 0 ? price : undefined;
-          const total = validPrice !== undefined ? Math.round(item.quantity * validPrice * 100) / 100 : undefined;
+          const qtyNum = typeof item.quantity === 'number' ? item.quantity : parseFloat(String(item.quantity)) || 0;
+          const total = validPrice !== undefined && qtyNum > 0 ? Math.round(qtyNum * validPrice * 100) / 100 : undefined;
           return { ...item, unitPrice: validPrice, totalPrice: total };
         }
         return item;
@@ -402,6 +435,17 @@ export const AdminInventory: React.FC = () => {
       return;
     }
 
+    // Ensure all items have clean valid quantities before saving
+    const sanitizedItems: InventoryDocumentItem[] = selectedDocItems.map((item) => {
+      const raw = String(item.quantity).trim();
+      const parsed = parseFloat(raw);
+      const cleanQty = raw === '' || isNaN(parsed) || parsed <= 0 ? 1 : raw;
+      return {
+        ...item,
+        quantity: cleanQty,
+      };
+    });
+
     const saved = inventoryService.saveDocument({
       title: docTitle.trim() || 'Grocery & Vegetable Purchase List',
       eventName: docEventName.trim(),
@@ -411,7 +455,7 @@ export const AdminInventory: React.FC = () => {
       preparedBy: docPreparedBy.trim() || undefined,
       notes: docNotes.trim() || undefined,
       language: docLanguage,
-      items: selectedDocItems,
+      items: sanitizedItems,
     });
 
     setPreviewDoc(saved);
@@ -1076,13 +1120,16 @@ export const AdminInventory: React.FC = () => {
                     {isTa ? 'தற்போதைய இருப்பு (விருப்பம்)' : 'Current Stock (Optional)'}
                   </label>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
                     value={formStock}
-                    onChange={(e) => setFormStock(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '' || /^\d*\.?\d*$/.test(v)) setFormStock(v);
+                    }}
                     placeholder="0"
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
 
@@ -1091,13 +1138,16 @@ export const AdminInventory: React.FC = () => {
                     {isTa ? 'இயல்பு கொள்முதல் அளவு' : 'Default Purchase Qty'}
                   </label>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
                     value={formPurchaseQty}
-                    onChange={(e) => setFormPurchaseQty(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '' || /^\d*\.?\d*$/.test(v)) setFormPurchaseQty(v);
+                    }}
                     placeholder="e.g. 10"
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
 
@@ -1106,13 +1156,16 @@ export const AdminInventory: React.FC = () => {
                     {isTa ? 'அலகு விலை (₹) (விருப்பம்)' : 'Unit Price (₹) (Optional)'}
                   </label>
                   <input
-                    type="number"
-                    min="0"
-                    step="0.01"
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
                     value={formUnitPrice}
-                    onChange={(e) => setFormUnitPrice(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (v === '' || /^\d*\.?\d*$/.test(v)) setFormUnitPrice(v);
+                    }}
                     placeholder="e.g. 55"
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                 </div>
               </div>
@@ -1636,13 +1689,24 @@ export const AdminInventory: React.FC = () => {
                         />
                         <div className="flex gap-1">
                           <input
-                            type="number"
-                            min="0.01"
-                            step="0.01"
+                            type="text"
+                            inputMode="decimal"
+                            autoComplete="off"
                             value={customItemQty}
-                            onChange={(e) => setCustomItemQty(e.target.value)}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              if (v === '' || /^\d*\.?\d*$/.test(v)) setCustomItemQty(v);
+                            }}
+                            onBlur={() => {
+                              const v = customItemQty.trim();
+                              if (!v || isNaN(parseFloat(v)) || parseFloat(v) <= 0) {
+                                setCustomItemQty('1');
+                              } else if (v.endsWith('.')) {
+                                setCustomItemQty(String(parseFloat(v)));
+                              }
+                            }}
                             placeholder="Qty"
-                            className="w-16 px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs"
+                            className="w-16 px-2 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-center font-bold text-primary focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           />
                           <select
                             value={customItemUnit}
@@ -1782,14 +1846,14 @@ export const AdminInventory: React.FC = () => {
                               </td>
                               <td className="py-2 px-3 text-center">
                                 <input
-                                  type="number"
-                                  min="0.01"
-                                  step="0.01"
+                                  type="text"
+                                  inputMode="decimal"
+                                  autoComplete="off"
                                   value={item.quantity}
-                                  onChange={(e) =>
-                                    updateDocItemQuantity(item.id, parseFloat(e.target.value) || 0)
-                                  }
-                                  className="w-20 px-2 py-1 text-center border border-slate-200 rounded-lg text-xs font-bold text-primary bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                                  onChange={(e) => updateDocItemQuantity(item.id, e.target.value)}
+                                  onBlur={() => handleBlurDocItemQuantity(item.id)}
+                                  placeholder="1"
+                                  className="w-20 px-2 py-1 text-center border border-slate-200 rounded-lg text-xs font-bold text-primary bg-white focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                               </td>
                               <td className="py-2 px-3">
@@ -1807,13 +1871,13 @@ export const AdminInventory: React.FC = () => {
                               </td>
                               <td className="py-2 px-3">
                                 <input
-                                  type="number"
-                                  min="0"
-                                  step="0.01"
+                                  type="text"
+                                  inputMode="decimal"
+                                  autoComplete="off"
                                   value={item.unitPrice !== undefined ? item.unitPrice : ''}
                                   onChange={(e) => updateDocItemPrice(item.id, e.target.value)}
                                   placeholder="—"
-                                  className="w-20 px-2 py-1 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-primary"
+                                  className="w-20 px-2 py-1 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                 />
                               </td>
                               <td className="py-2 px-3">

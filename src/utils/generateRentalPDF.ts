@@ -55,8 +55,49 @@ export async function generateRentalPDF(
   const PAGE_WIDTH = 1240;
   const PAGE_HEIGHT = 1754;
 
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil(doc.items.length / itemsPerPage) || 1;
+  // Dynamic continuous page calculation for compact, waste-free layout
+  const rowH = 42;
+  const maxTableY = 1640;
+  const summaryH = 280;
+
+  const p1StartY = 48 + 135 + 148 + 36; // 367
+  const p1CapWithSummary = Math.min(18, Math.floor((maxTableY - summaryH - p1StartY) / rowH));
+  const p1CapWithoutSummary = Math.min(24, Math.floor((maxTableY - p1StartY) / rowH));
+
+  const pNextStartY = 48 + 135 + 10 + 36; // 229
+  const pNextCapWithSummary = Math.min(24, Math.floor((maxTableY - summaryH - pNextStartY) / rowH));
+  const pNextCapWithoutSummary = Math.min(30, Math.floor((maxTableY - pNextStartY) / rowH));
+
+  const pages: (typeof doc.items)[] = [];
+  if (doc.items.length === 0) {
+    pages.push([]);
+  } else if (doc.items.length <= p1CapWithSummary) {
+    pages.push(doc.items);
+  } else {
+    let remaining = [...doc.items];
+    let pIdx = 0;
+    while (remaining.length > 0) {
+      const isFirst = pIdx === 0;
+      const capWithSummary = isFirst ? p1CapWithSummary : pNextCapWithSummary;
+      const capWithoutSummary = isFirst ? p1CapWithoutSummary : pNextCapWithoutSummary;
+
+      if (remaining.length <= capWithSummary) {
+        pages.push(remaining);
+        break;
+      }
+
+      let take = capWithoutSummary;
+      const leftOver = remaining.length - take;
+      if (leftOver > 0 && leftOver < 3 && take > 5) {
+        take = take - (3 - leftOver);
+      }
+      pages.push(remaining.slice(0, take));
+      remaining = remaining.slice(take);
+      pIdx++;
+    }
+  }
+
+  const totalPages = pages.length;
 
   const pdf = new jsPDF({
     orientation: 'portrait',
@@ -129,6 +170,7 @@ export async function generateRentalPDF(
   };
 
   const totalQuantityRented = doc.items.reduce((s, i) => s + (Number(i.quantity) || 0), 0);
+  let runningItemOffset = 0;
 
   for (let pageIdx = 0; pageIdx < totalPages; pageIdx++) {
     onProgress?.(
@@ -136,8 +178,9 @@ export async function generateRentalPDF(
       `Rendering page ${pageIdx + 1} of ${totalPages}…`
     );
 
-    const startIdx = pageIdx * itemsPerPage;
-    const pageItems = doc.items.slice(startIdx, startIdx + itemsPerPage);
+    const pageItems = pages[pageIdx];
+    const startIdx = runningItemOffset;
+    runningItemOffset += pageItems.length;
 
     // Clear background
     ctx.fillStyle = '#FFFFFF';
@@ -340,7 +383,6 @@ export async function generateRentalPDF(
     y += 36;
 
     // Table Rows
-    const rowH = 46;
     for (let r = 0; r < pageItems.length; r++) {
       const itm = pageItems[r];
       const isAlt = r % 2 === 1;
